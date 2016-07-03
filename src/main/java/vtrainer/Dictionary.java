@@ -12,8 +12,6 @@ import java.util.Map;
 
 import org.jdom.Element;
 
-import com.signal7.util.DataUtil;
-
 public class Dictionary {
 
     private List entries = new ArrayList();
@@ -129,13 +127,6 @@ public class Dictionary {
         Collections.reverse(copy);
 
         return copy.subList(0, size);
-    }
-
-    public DictionaryEntry getMostDifficultEntry() {
-        DictionaryEntry entry = (DictionaryEntry)DataUtil
-                .getFirst(createRandomList(entries.size()));
-
-        return entry;
     }
 
     public int getAverageDifficulty() {
