@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: vtrainer.gui.VTrainer
+
+Name: "Vtrainer"
+Implementation-Title: "vtrainer"
+Implementation-Vendor: "Robert Krueger"

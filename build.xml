@@ -1,0 +1,81 @@
+<project name="vtrainer" default="compile" basedir=".">
+
+  <property name="src" value="../src/" />
+  <property name="dist" value="dist/" />
+  <property name="classes" value="classes/" />
+  <property name="tmp" value="tmp/" />
+  <property name="lib" value="../lib" />
+
+  <patternset id="resource-excludes">
+     <exclude name="**/*.java"/>
+     <exclude name="**/*.bak"/>
+     <exclude name="**/.#*"/>
+  </patternset>
+
+  <path id="local.libs">
+    <pathelement location="../lib/jdom.jar"/>
+    <pathelement location="../lib/s7util.jar"/>
+    <pathelement location="../lib/junit.jar"/>
+    <pathelement location="../lib/kunststoff.jar"/>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+    <filter token="DSTAMP" value="${DSTAMP}" />
+    <filter token="TSTAMP" value="${TSTAMP}" />
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${dist}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <mkdir dir="${classes}" />
+    <copy todir="${classes}" includeEmptyDirs="no">
+       <fileset dir="${src}">
+          <patternset refid="resource-excludes"/>
+       </fileset>
+    </copy>
+    <javac destdir="${classes}" extdirs="${java.ext.dirs}">
+       <src path="${src}" />
+       <classpath path="${java.home}/lib/rt.jar"/>
+       <classpath refid="local.libs"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="compile">
+    <junit> 
+      <classpath path="${classes}"/>
+      <classpath refid="local.libs"/>
+      <formatter type="xml" usefile="false"/>
+      <test name="vtrainer.test.BasicTest" />
+    </junit>
+  </target>
+
+  <target name="dist" depends="compile, prepare">
+    <delete dir="${tmp}" />
+    <delete dir="${tmp}" />
+    <copy todir="${tmp}" includeEmptyDirs="no">
+       <fileset dir="${classes}"/>
+    </copy>
+    <copy file="manifest.tml" tofile="manifest.mf" overwrite="no" filtering="yes"/>
+    <unjar src="${lib}/jdom.jar" dest="${tmp}"/>
+    <unjar src="${lib}/s7util.jar" dest="${tmp}"/>
+    <unjar src="${lib}/kunststoff.jar" dest="${tmp}"/>
+    <mkdir dir="${tmp}" />
+    <jar jarfile="${dist}/vtrainer.jar" 
+	 basedir="${tmp}"
+	 manifest="manifest.mf"/>
+    <delete file="manifest.mf" />
+    <zip zipfile="${dist}/vtrainer.zip"
+	 basedir="${dist}"
+         includes="vtrainer.jar"/>
+    <copy file="${dist}/vtrainer.jar" todir="../website"/>
+    <copy file="${dist}/vtrainer.zip" todir="../website"/>
+  </target>
+
+  <target name="clean" >
+    <delete dir="${classes}"/>
+  </target>
+
+</project>

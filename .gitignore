@@ -1,0 +1,26 @@
+# gradle build output
+/**/build/
+.gradle
+
+# apple folder attributes
+.DS_Store
+
+# standard backup files
+*~
+*.bak
+
+# TestNGs test-output folders
+/*/test-output/
+
+# our own test data output
+/*/test/data/out/*
+
+# generated idea configuration
+*.iml
+*.ipr
+*.iws
+.idea/libraries/
+.idea/gradle.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/uiDesigner.xml

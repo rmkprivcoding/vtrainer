@@ -1,0 +1,30 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = 'vtrainer.gui.VTrainer'
+
+shadowJar {
+  baseName = 'vtrainer'
+  classifier = null
+  version = null
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.jdom:jdom:1.1.3'
+  compile 'com.google.guava:guava:18.0'
+  testCompile 'junit:junit:4.12'
+}
