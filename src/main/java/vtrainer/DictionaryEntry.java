@@ -133,7 +133,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         }
 
         if (e.getAttribute(LAST_TESTED_ATTR) != null) {
-            de.setLastTested(Integer.parseInt(e
+            de.setLastTested(Long.parseLong(e
                     .getAttributeValue(LAST_TESTED_ATTR)));
         }
 
