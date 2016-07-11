@@ -132,11 +132,13 @@ public class VTrainer {
 
     private boolean highscoreMode = false;
     private static final int NEW_ENTRY_AVG_DIFFICULTY_DELTA = 4;
-    private static final String VERSION = "0.8";
+    private static final String VERSION = "0.9";
 
     static {
         //propertyeditors registrieren
         PropertyEditorManager.registerEditor(Integer.TYPE, IntEditor.class);
+        // FIXME: use old sort because our random sorter violates the contract and causes exception
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
     public VTrainer(File dictionaryFile) {
