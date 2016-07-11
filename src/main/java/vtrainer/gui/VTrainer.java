@@ -418,9 +418,6 @@ public class VTrainer {
         selectedEntry = new DictionaryEntry();
         editDictionaryEntryDialog.refresh();
         editDictionaryEntryDialog.setVisible(true);
-        selectedEntry.setDifficulty(dictionary.getAverageDifficulty()
-                + NEW_ENTRY_AVG_DIFFICULTY_DELTA);
-        System.err.println("average difficulty:" + dictionary.getAverageDifficulty());
         saveAction.setEnabled(true);
     }
 
