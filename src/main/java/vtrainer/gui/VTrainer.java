@@ -148,7 +148,7 @@ public class VTrainer {
             throw new IllegalArgumentException("null dictionary file");
         }
 
-        mainFrame = new JFrame("VTrainer - push yourself to the limits");
+        mainFrame = new JFrame("VTrainer");
 
         initActions();
         initMenus();
@@ -290,7 +290,7 @@ public class VTrainer {
     }
 
     private void initActions() {
-        saveAction = new AbstractAction("save") {
+        saveAction = new AbstractAction("Save") {
             public void actionPerformed(ActionEvent ae) {
                 try {
                     save();
@@ -304,7 +304,7 @@ public class VTrainer {
         saveAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(new Character(
                 's'), InputEvent.CTRL_MASK));
 
-        addEntryAction = new AbstractAction("add entry") {
+        addEntryAction = new AbstractAction("Add Entry") {
             public void actionPerformed(ActionEvent ae) {
                 addEntry();
             }
@@ -312,14 +312,14 @@ public class VTrainer {
 
         addEntryAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'a'));
 
-        editEntryAction = new AbstractAction("edit entry") {
+        editEntryAction = new AbstractAction("Edit Entry") {
             public void actionPerformed(ActionEvent ae) {
                 editDictionaryEntryDialog.refresh();
                 editDictionaryEntryDialog.setVisible(true);
             }
         };
 
-        removeEntryAction = new AbstractAction("remove entry") {
+        removeEntryAction = new AbstractAction("Remove Entry") {
             public void actionPerformed(ActionEvent ae) {
                 int option = JOptionPane.showConfirmDialog(mainFrame, "remove " + selectedEntry
                         + " from dictionary", "remove entry", JOptionPane.YES_NO_OPTION);
@@ -332,7 +332,7 @@ public class VTrainer {
             }
         };
 
-        removeTranslationAction = new AbstractAction("remove translation") {
+        removeTranslationAction = new AbstractAction("Remove Translation") {
             public void actionPerformed(ActionEvent ae) {
                 selectedEntry.getTranslations().remove(selectedTranslation);
                 editDictionaryEntryDialog.refreshTranslations();
@@ -340,7 +340,7 @@ public class VTrainer {
             }
         };
 
-        exitAction = new AbstractAction("exit") {
+        exitAction = new AbstractAction("Exit") {
             public void actionPerformed(ActionEvent ae) {
                 if (checkExit()) {
                     System.exit(0);
@@ -352,7 +352,7 @@ public class VTrainer {
         exitAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(new Character(
                 'x'), InputEvent.CTRL_MASK));
 
-        startTestAction = new AbstractAction("start test") {
+        startTestAction = new AbstractAction("Start Test") {
             public void actionPerformed(ActionEvent ae) {
                 startTest();
             }
@@ -360,7 +360,7 @@ public class VTrainer {
 
         startTestAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'t'));
 
-        attemptHighscoreAction = new AbstractAction("attempt highscore") {
+        attemptHighscoreAction = new AbstractAction("Attempt Highscore") {
             public void actionPerformed(ActionEvent ae) {
                 setHighscoreMode(true);
                 startTest();
@@ -368,14 +368,14 @@ public class VTrainer {
             }
         };
 
-        showReverseTranslationTableAction = new AbstractAction("show reverse translations") {
+        showReverseTranslationTableAction = new AbstractAction("Show Reverse Translations") {
             public void actionPerformed(ActionEvent ae) {
                 translationDialog.setData(dictionary.getReverseMap());
                 translationDialog.show();
             }
         };
 
-        startFlashAction = new AbstractAction("start reverse flash") {
+        startFlashAction = new AbstractAction("Start Reverse Flash") {
             public void actionPerformed(ActionEvent ae) {
                 startFlash();
             }
@@ -391,13 +391,13 @@ public class VTrainer {
 
     private boolean checkExit() {
         if (saveAction.isEnabled()) {
-            int option = JOptionPane.showConfirmDialog(mainFrame, "save dictionary and score",
-                    "save", JOptionPane.YES_NO_CANCEL_OPTION);
+            int option = JOptionPane.showConfirmDialog(mainFrame, "Save dictionary and score",
+                    "Save", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 try {
                     save();
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(mainFrame, ex.toString(), "save failed",
+                    JOptionPane.showMessageDialog(mainFrame, ex.toString(), "Save failed",
                             JOptionPane.ERROR_MESSAGE);
                 }
             } else if (option == JOptionPane.CANCEL_OPTION) {
@@ -515,20 +515,11 @@ public class VTrainer {
         mbar.add(doMenu);
 
         JMenu helpMenu = new JMenu("?");
-        helpMenu.add(new AbstractAction("about") {
+        helpMenu.add(new AbstractAction("About") {
             public void actionPerformed(ActionEvent ae) {
-                String additionalInfo = "";
-                try {
-                    additionalInfo = "built "
-                            + new Date(new File(VTrainer.class.getProtectionDomain()
-                                    .getCodeSource().getLocation().getPath()).lastModified());
-                } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
-                }
-
-                String msg = "VTrainer v" + VERSION + "\n\n" + additionalInfo + "\n\n"
-                        + "Copyright 2002, 2003 Robert Kr�ger, Signal7 GmbH";
-                JOptionPane.showMessageDialog(mainFrame, msg, "about VTrainer",
+                String msg = "VTrainer v" + VERSION + "\n\n"
+                        + "Copyright 2002 - 2016 Robert Krueger";
+                JOptionPane.showMessageDialog(mainFrame, msg, "About VTrainer",
                         JOptionPane.INFORMATION_MESSAGE);
             }
         });
