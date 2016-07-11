@@ -1,19 +1,13 @@
 package vtrainer;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.jdom.Element;
 
 public class Dictionary {
 
+    private static Random random = new Random(System.currentTimeMillis());
     private List entries = new ArrayList();
     private int highscore = 0;
     private Map reverseMap = new HashMap();
@@ -114,6 +108,22 @@ public class Dictionary {
 
     public Map getForwardMap() {
         return forwardMap;
+    }
+
+    private static class ListCandidate implements Comparable<ListCandidate>{
+
+        private final DictionaryEntry entry;
+
+        public ListCandidate(DictionaryEntry entry) {
+            this.entry = entry;
+        }
+
+        private final int noise = random.nextInt(2);
+
+        @Override
+        public int compareTo(ListCandidate o) {
+            return Integer.valueOf(entry.getDifficulty() + noise).compareTo(o.entry.getDifficulty() + o.noise);
+        }
     }
 
     public List createRandomList(int size) {
