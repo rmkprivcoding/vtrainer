@@ -8,10 +8,10 @@ import org.jdom.Element;
 public class Dictionary {
 
     private static Random random = new Random(System.currentTimeMillis());
-    private List entries = new ArrayList();
+    private List<DictionaryEntry> entries = new ArrayList<>();
     private int highscore = 0;
-    private Map reverseMap = new HashMap();
-    private Map forwardMap = new HashMap();
+    private Map<String, List<String>> reverseMap = new HashMap<>();
+    private Map<String, DictionaryEntry> forwardMap = new HashMap<>();
     private Locale locale = Locale.getDefault();
     private Collator collator = Collator.getInstance(locale);
 
@@ -47,8 +47,8 @@ public class Dictionary {
 
     private Integer getNextID() {
         Integer maxID = new Integer(0);
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            DictionaryEntry d = (DictionaryEntry)it.next();
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+            DictionaryEntry d = it.next();
             Integer id = d.getID();
             if (id.intValue() > maxID.intValue()) {
                 maxID = id;
@@ -102,11 +102,11 @@ public class Dictionary {
         collator.setStrength(Collator.PRIMARY);
     }
 
-    public Map getReverseMap() {
+    public Map<String, List<String>> getReverseMap() {
         return reverseMap;
     }
 
-    public Map getForwardMap() {
+    public Map<String, DictionaryEntry> getForwardMap() {
         return forwardMap;
     }
 
@@ -158,8 +158,8 @@ public class Dictionary {
     public void refreshMaps() {
         forwardMap.clear();
         reverseMap.clear();
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            DictionaryEntry entry = (DictionaryEntry)it.next();
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+            DictionaryEntry entry = it.next();
             String name = entry.getName();
             forwardMap.put(name, entry);
             for (Iterator itt = entry.getTranslations().iterator(); itt.hasNext();) {
@@ -175,8 +175,8 @@ public class Dictionary {
     }
 
     private DictionaryEntry getFirstEntryWithPrefix(String searchTerm) {
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            DictionaryEntry entry = (DictionaryEntry)it.next();
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+            DictionaryEntry entry = it.next();
             if (entry.getName().toLowerCase().startsWith(searchTerm.toLowerCase())) {
                 return entry;
             }
@@ -185,8 +185,8 @@ public class Dictionary {
     }
 
     public DictionaryEntry getMatchingEntry(String searchTerm) {
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            DictionaryEntry entry = (DictionaryEntry)it.next();
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+            DictionaryEntry entry = it.next();
             if (entry.getName().equalsIgnoreCase(searchTerm)) {
                 return entry;
             }

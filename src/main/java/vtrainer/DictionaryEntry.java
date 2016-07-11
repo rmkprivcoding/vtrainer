@@ -8,12 +8,12 @@ import java.util.Random;
 
 import org.jdom.Element;
 
-public class DictionaryEntry implements Comparable {
+public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
     private Integer id = null;
     private String name;
     private String notes = null;
-    private List translations = new ArrayList();
+    private List<String> translations = new ArrayList<>();
     private long lastTested = 0l;
 
     private int difficulty = 0;
@@ -64,7 +64,7 @@ public class DictionaryEntry implements Comparable {
         this.lastTested = lastTested;
     }
 
-    public List getTranslations() {
+    public List<String> getTranslations() {
         return translations;
     }
 
@@ -76,8 +76,8 @@ public class DictionaryEntry implements Comparable {
 
         boolean found = false;
 
-        for (Iterator it = translations.iterator(); it.hasNext();) {
-            String t = (String)it.next();
+        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+            String t = it.next();
             found = t.equalsIgnoreCase(text.trim());
             if (found)
                 break;
@@ -98,8 +98,8 @@ public class DictionaryEntry implements Comparable {
             xml.setAttribute("last-tested", "" + getLastTested());
         }
 
-        for (Iterator it = translations.iterator(); it.hasNext();) {
-            String t = (String)it.next();
+        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+            String t = it.next();
             Element txml = new Element("translation");
             txml.setText(t);
             xml.addContent(txml);
@@ -151,8 +151,8 @@ public class DictionaryEntry implements Comparable {
 
         String msg = getName() + "\n\n";
 
-        for (Iterator it = translations.iterator(); it.hasNext();) {
-            String t = (String)it.next();
+        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+            String t = it.next();
             msg += " - " + t + "\n";
         }
 
@@ -163,8 +163,8 @@ public class DictionaryEntry implements Comparable {
         return msg;
     }
 
-    public int compareTo(Object other) {
-        return name.toLowerCase().compareTo(((DictionaryEntry)other).getName().toLowerCase());
+    public int compareTo(DictionaryEntry other) {
+        return name.toLowerCase().compareTo(other.getName().toLowerCase());
     }
 
     public static class DifficultyWithRandomComparator implements Comparator {
