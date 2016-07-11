@@ -927,7 +927,6 @@ public class VTrainer {
         void submit() {
             if (testedEntry.isTranslation(inputTF.getText())) {
                 testedEntry.addToDifficulty(-DEC_DIFFICULTY_PER_CORRECT_ANSWER);
-                testedEntry.addSuccess();
                 numCorrect++;
                 JOptionPane.showMessageDialog(mainFrame, testedEntry.toLargeString(), "correct",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -954,7 +953,6 @@ public class VTrainer {
                         "test failed", JOptionPane.ERROR_MESSAGE);
 
                 testedEntry.addToDifficulty(INC_DIFFICULTY_PER_FAILURE);
-                testedEntry.setConsecutiveSuccesses(0);
                 if (highscoreMode) {
                     int numCorrectEntries = dictionary.getEntries().size() - testSet.size() - 1;
                     if (numCorrectEntries > dictionary.getHighscore()) {

@@ -14,8 +14,9 @@ public class DictionaryEntry implements Comparable {
     private String name;
     private String notes = null;
     private List translations = new ArrayList();
+    private long lastTested = 0l;
+
     private int difficulty = 0;
-    private int consecutiveSuccesses = 0;
 
     public Integer getID() {
         return id;
@@ -51,10 +52,16 @@ public class DictionaryEntry implements Comparable {
 
     public void addToDifficulty(int delta) {
         difficulty += delta;
+        // never let difficulty become negative
+        difficulty = Math.max(difficulty, 0);
     }
 
-    public void addSuccess() {
-        consecutiveSuccesses++;
+    public long getLastTested() {
+        return lastTested;
+    }
+
+    public void setLastTested(long lastTested) {
+        this.lastTested = lastTested;
     }
 
     public List getTranslations() {
@@ -87,9 +94,8 @@ public class DictionaryEntry implements Comparable {
         if (getDifficulty() != 0) {
             xml.setAttribute("difficulty", "" + getDifficulty());
         }
-
-        if (getConsecutiveSuccesses() != 0) {
-            xml.setAttribute("consecutiveSuccesses", "" + getConsecutiveSuccesses());
+        if (getLastTested() != 0) {
+            xml.setAttribute("last-tested", "" + getLastTested());
         }
 
         for (Iterator it = translations.iterator(); it.hasNext();) {
@@ -114,12 +120,13 @@ public class DictionaryEntry implements Comparable {
         de.setName(e.getAttributeValue("name"));
 
         if (e.getAttribute("difficulty") != null) {
-            de.setDifficulty(Integer.parseInt(e.getAttributeValue("difficulty")));
+            // backwards compatibility, enforce min difficulty of 0
+            de.setDifficulty(Math.max(0, Integer.parseInt(e.getAttributeValue("difficulty"))));
         }
 
-        if (e.getAttribute("consecutive-successes") != null) {
-            de.setConsecutiveSuccesses(Integer.parseInt(e
-                    .getAttributeValue("consecutive-successes")));
+        if (e.getAttribute("last-tested") != null) {
+            de.setLastTested(Integer.parseInt(e
+                    .getAttributeValue("last-tested")));
         }
 
         for (Iterator it = e.getChildren("translation").iterator(); it.hasNext();) {
@@ -168,14 +175,6 @@ public class DictionaryEntry implements Comparable {
             int randomNoise = (int)(10.0 * random.nextDouble());
             return d1.compareTo(d2 + randomNoise);
         }
-    }
-
-    public int getConsecutiveSuccesses() {
-        return consecutiveSuccesses;
-    }
-
-    public void setConsecutiveSuccesses(int consecutiveSuccesses) {
-        this.consecutiveSuccesses = consecutiveSuccesses;
     }
 
 }
