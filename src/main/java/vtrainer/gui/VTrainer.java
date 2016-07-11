@@ -72,6 +72,7 @@ import org.jdom.output.XMLOutputter;
 
 import vtrainer.Dictionary;
 import vtrainer.DictionaryEntry;
+import vtrainer.util.DocumentChangeListener;
 import vtrainer.util.IntEditor;
 import vtrainer.util.PropertySheet;
 
@@ -589,44 +590,40 @@ public class VTrainer {
         private JTextField translationTF = new JTextField(20);
         private JList translationLI = null;
         private DefaultListModel translationLM = new DefaultListModel();
-        private JButton addBT = new JButton("add translation");
+        private JButton addBT = new JButton("Add Translation");
         private JButton okBT = new JButton("OK");
-        private JButton cancelBT = new JButton("cancel");
+        private JButton cancelBT = new JButton("Cancel");
 
         public EditDictionaryEntryDialog(JFrame ownerFrame) {
             super(ownerFrame, "Edit Dictionary Entry", true);
             JPanel basePanel = new JPanel();
             basePanel.setLayout(new BorderLayout());
 
-            nameTF.addKeyListener(new KeyAdapter() {
-                // zur sicherheit beide (wegen MAC-Zicken)
-                public void keyTyped(KeyEvent e) {
-                    checkCanSubmit();
-                    checkCanAddTranslation();
-                }
-                public void keyReleased(KeyEvent e) {
+            nameTF.getDocument().addDocumentListener(new DocumentChangeListener() {
+                @Override
+                public void documentChanged(DocumentEvent e) {
                     checkCanSubmit();
                     checkCanAddTranslation();
                 }
             });
 
-            translationTF.addKeyListener(new KeyAdapter() {
-                public void keyPressed(KeyEvent e) {
+            translationTF.getDocument().addDocumentListener(new DocumentChangeListener() {
+                @Override
+                public void documentChanged(DocumentEvent e) {
                     checkCanAddTranslation();
                 }
             });
 
-            translationTF.addActionListener(new ActionListener() {
+            final ActionListener addListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    addTranslation();
+                    if(addBT.isEnabled()) {
+                        addTranslation();
+                    }
                 }
-            });
+            };
+            translationTF.addActionListener(addListener);
 
-            addBT.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    addTranslation();
-                }
-            });
+            addBT.addActionListener(addListener);
 
             cancelBT.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
