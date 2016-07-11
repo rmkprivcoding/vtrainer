@@ -3,6 +3,7 @@ package vtrainer;
 import java.text.Collator;
 import java.util.*;
 
+import com.google.common.collect.Iterables;
 import org.jdom.Element;
 
 public class Dictionary {
@@ -126,17 +127,34 @@ public class Dictionary {
         }
     }
 
-    public List createRandomList(int size) {
-        if (size > entries.size()) {
-            size = entries.size();
+    public List<DictionaryEntry> createRandomList(int size) {
+
+        List<DictionaryEntry> copy = new ArrayList<>(entries);
+        // first eliminate all entries that have been asked recently
+        long lastAllowed = System.currentTimeMillis() - 1000*60*15;
+        Iterables.removeIf(copy, (e) -> e.getLastTested() > lastAllowed);
+
+        // special case for small dictionaries: if not enough entries remain we suspend the
+        // last tested criterion
+        if(size > copy.size()){
+            copy = new ArrayList<>(entries);
         }
 
-        List copy = new ArrayList(entries);
-        Collections.shuffle(copy);
-        Collections.sort(copy, new DictionaryEntry.DifficultyWithRandomComparator());
-        Collections.reverse(copy);
+        if (size > copy.size()) {
+            size = copy.size();
+        }
 
-        return copy.subList(0, size);
+        // build candidate list
+        List<ListCandidate> listCandidates = new ArrayList<>();
+        Iterables.addAll(listCandidates, Iterables.transform(copy, (e) -> new ListCandidate(e)));
+        Collections.shuffle(listCandidates);
+        Collections.sort(listCandidates);
+        Collections.reverse(listCandidates);
+        List<DictionaryEntry> randomList = new ArrayList<>();
+        for(int i=0;i<size;i++){
+            randomList.add(listCandidates.get(i).entry);
+        }
+        return randomList;
     }
 
     public int getAverageDifficulty() {
