@@ -10,6 +10,14 @@ import org.jdom.Element;
 
 public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
+    private static final String DIFFICULTY_ATTR = "difficulty";
+    private static final String LAST_TESTED_ATTR = "last-tested";
+    private static final String TRANSLATION_ELEM = "translation";
+    private static final String NOTES_ELEM = "notes";
+    private static final String NAME_ATTR = "name";
+    private static final String ID_ATTR = "id";
+    private static final String DICTIONARY_ENTRY_ELEM = "dictionary-entry";
+
     private Integer id = null;
     private String name;
     private String notes = null;
@@ -87,26 +95,26 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     }
 
     public Element toXML() {
-        Element xml = new Element("dictionary-entry");
-        xml.setAttribute("id", "" + getID());
-        xml.setAttribute("name", getName());
+        Element xml = new Element(DICTIONARY_ENTRY_ELEM);
+        xml.setAttribute(ID_ATTR, "" + getID());
+        xml.setAttribute(NAME_ATTR, getName());
 
         if (getDifficulty() != 0) {
-            xml.setAttribute("difficulty", "" + getDifficulty());
+            xml.setAttribute(DIFFICULTY_ATTR, "" + getDifficulty());
         }
         if (getLastTested() != 0) {
-            xml.setAttribute("last-tested", "" + getLastTested());
+            xml.setAttribute(LAST_TESTED_ATTR, "" + getLastTested());
         }
 
         for (Iterator<String> it = translations.iterator(); it.hasNext();) {
             String t = it.next();
-            Element txml = new Element("translation");
+            Element txml = new Element(TRANSLATION_ELEM);
             txml.setText(t);
             xml.addContent(txml);
         }
 
         if (notes != null) {
-            Element nxml = new Element("notes");
+            Element nxml = new Element(NOTES_ELEM);
             nxml.setText(getNotes());
             xml.addContent(nxml);
         }
@@ -116,28 +124,28 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
     public static DictionaryEntry createFromXML(Element e) {
         DictionaryEntry de = new DictionaryEntry();
-        de.setID(new Integer(e.getAttributeValue("id")));
-        de.setName(e.getAttributeValue("name"));
+        de.setID(new Integer(e.getAttributeValue(ID_ATTR)));
+        de.setName(e.getAttributeValue(NAME_ATTR));
 
-        if (e.getAttribute("difficulty") != null) {
+        if (e.getAttribute(DIFFICULTY_ATTR) != null) {
             // backwards compatibility, enforce min difficulty of 0
-            de.setDifficulty(Math.max(0, Integer.parseInt(e.getAttributeValue("difficulty"))));
+            de.setDifficulty(Math.max(0, Integer.parseInt(e.getAttributeValue(DIFFICULTY_ATTR))));
         }
 
-        if (e.getAttribute("last-tested") != null) {
+        if (e.getAttribute(LAST_TESTED_ATTR) != null) {
             de.setLastTested(Integer.parseInt(e
-                    .getAttributeValue("last-tested")));
+                    .getAttributeValue(LAST_TESTED_ATTR)));
         }
 
-        for (Iterator it = e.getChildren("translation").iterator(); it.hasNext();) {
+        for (Iterator it = e.getChildren(TRANSLATION_ELEM).iterator(); it.hasNext();) {
             Element te = (Element)it.next();
             if (!"".equals(te.getText())) {
                 de.getTranslations().add(te.getText());
             }
         }
 
-        if (e.getChild("notes") != null) {
-            de.setNotes(e.getChildText("notes"));
+        if (e.getChild(NOTES_ELEM) != null) {
+            de.setNotes(e.getChildText(NOTES_ELEM));
         }
 
         return de;
