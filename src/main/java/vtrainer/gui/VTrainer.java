@@ -135,6 +135,8 @@ public class VTrainer {
         PropertyEditorManager.registerEditor(Integer.TYPE, IntEditor.class);
         // FIXME: use old sort because our random sorter violates the contract and causes exception
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+        // make cmd-q emit a window event on mac
+        System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
     }
 
     public VTrainer(File dictionaryFile) {
