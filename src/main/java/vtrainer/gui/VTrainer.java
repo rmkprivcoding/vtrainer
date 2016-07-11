@@ -925,6 +925,7 @@ public class VTrainer {
         }
 
         void submit() {
+            testedEntry.setLastTested(System.currentTimeMillis());
             if (testedEntry.isTranslation(inputTF.getText())) {
                 testedEntry.addToDifficulty(-DEC_DIFFICULTY_PER_CORRECT_ANSWER);
                 numCorrect++;
