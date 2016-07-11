@@ -171,7 +171,7 @@ public class VTrainer {
             try {
                 load();
             } catch (Exception ex) {
-                throw new RuntimeException("arghh!!!:" + ex);
+                throw new RuntimeException("Error loading state", ex);
             }
         }
 
