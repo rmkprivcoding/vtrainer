@@ -611,30 +611,22 @@ public class VTrainer {
                 }
             });
 
-            final ActionListener addListener = new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if(addBT.isEnabled()) {
-                        addTranslation();
-                    }
+            final ActionListener addListener = e -> {
+                if(addBT.isEnabled()) {
+                    addTranslation();
                 }
             };
             translationTF.addActionListener(addListener);
 
             addBT.addActionListener(addListener);
 
-            cancelBT.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    hide();
-                }
-            });
+            cancelBT.addActionListener(e -> hide());
 
-            okBT.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (translationTF.getText().length() > 0) {
-                        addTranslation();
-                    }
-                    submit();
+            okBT.addActionListener(e -> {
+                if (translationTF.getText().length() > 0) {
+                    addTranslation();
                 }
+                submit();
             });
 
             JPanel topPanel = new JPanel();
