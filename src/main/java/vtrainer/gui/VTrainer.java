@@ -80,7 +80,7 @@ public class VTrainer {
 
     // the size of the dictionary is divided by this to determine the number of words per test
     private static final int TEST_SET_SIZE_FACTOR = 200;
-    private static final int MAX_TEST_SIZE = 10;
+    private static final int MAX_TEST_SIZE = 5;
     private static final String DEFAULT_DICTIONARY_FILE_NAME = "vtrainer.xml";
     private static final int TEST_SET_SIZE = 5;
     // a test is only started after this minimum number of entries have been made
