@@ -117,13 +117,15 @@ public class Dictionary {
 
         public ListCandidate(DictionaryEntry entry) {
             this.entry = entry;
+            sortRank  = random.nextInt(10) + entry.getDifficulty();
         }
 
-        private final int noise = random.nextInt(2);
+        // this is used for sorting, a bit of random + the difficulty as a boost
+        private final int sortRank;
 
         @Override
         public int compareTo(ListCandidate o) {
-            return Integer.valueOf(entry.getDifficulty() + noise).compareTo(o.entry.getDifficulty() + o.noise);
+            return Integer.valueOf(sortRank).compareTo(o.sortRank);
         }
     }
 
