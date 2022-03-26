@@ -8,6 +8,9 @@ import org.jdom.Element;
 
 public class Dictionary {
 
+    // minimum time between testing the same word (in ms)
+    // currently 10 hours
+    private static final int MIN_TEST_DISTANCE = 1000 * 60 * 60 * 10;
     private static Random random = new Random(System.currentTimeMillis());
     private List<DictionaryEntry> entries = new ArrayList<>();
     private int highscore = 0;
@@ -117,7 +120,7 @@ public class Dictionary {
 
         public ListCandidate(DictionaryEntry entry) {
             this.entry = entry;
-            sortRank  = random.nextInt(10) + entry.getDifficulty();
+            sortRank  = random.nextInt(30) + entry.getDifficulty();
         }
 
         // this is used for sorting, a bit of random + the difficulty as a boost
@@ -133,7 +136,7 @@ public class Dictionary {
 
         List<DictionaryEntry> copy = new ArrayList<>(entries);
         // first eliminate all entries that have been asked recently
-        long lastAllowed = System.currentTimeMillis() - 1000*60*15;
+        long lastAllowed = System.currentTimeMillis() - MIN_TEST_DISTANCE;
         Iterables.removeIf(copy, (e) -> e.getLastTested() > lastAllowed);
 
         // special case for small dictionaries: if not enough entries remain we suspend the
@@ -149,7 +152,7 @@ public class Dictionary {
         // build candidate list
         List<ListCandidate> listCandidates = new ArrayList<>();
         Iterables.addAll(listCandidates, Iterables.transform(copy, (e) -> new ListCandidate(e)));
-        Collections.shuffle(listCandidates);
+        Collections.shuffle(listCandidates, random);
         Collections.sort(listCandidates);
         Collections.reverse(listCandidates);
         List<DictionaryEntry> randomList = new ArrayList<>();
@@ -204,6 +207,16 @@ public class Dictionary {
         return null;
     }
 
+    private DictionaryEntry getFirstEntryContaining(String searchTerm) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+            DictionaryEntry entry = it.next();
+            if (entry.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     public DictionaryEntry getMatchingEntry(String searchTerm) {
         for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
             DictionaryEntry entry = it.next();
@@ -216,6 +229,14 @@ public class Dictionary {
 
     public int getFirstEntryWithPrefixIndex(String searchTerm) {
         DictionaryEntry entry = getFirstEntryWithPrefix(searchTerm);
+        if (entry != null) {
+            return entries.indexOf(entry);
+        }
+        return -1;
+    }
+
+    public int getFirstEntryContainingIndex(String searchTerm) {
+        DictionaryEntry entry = getFirstEntryContaining(searchTerm);
         if (entry != null) {
             return entries.indexOf(entry);
         }

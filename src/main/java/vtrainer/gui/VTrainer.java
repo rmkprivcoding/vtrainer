@@ -36,6 +36,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -63,6 +64,7 @@ import javax.swing.Timer;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -78,6 +80,7 @@ import vtrainer.util.PropertySheet;
 
 public class VTrainer {
 
+    private final static Logger logger = Logger.getLogger(VTrainer.class.getSimpleName());
     // the size of the dictionary is divided by this to determine the number of words per test
     private static final int TEST_SET_SIZE_FACTOR = 200;
     private static final int MAX_TEST_SIZE = 5;
@@ -92,8 +95,8 @@ public class VTrainer {
     private static final int IOBUFSIZE = 20000;
     private static final int FLASH_INTERVAL = 400;
 
-    private JFrame mainFrame = null;
-    private File dictionaryFile = null;
+    private final JFrame mainFrame;
+    private final File dictionaryFile;
     private Dictionary dictionary = null;
     private DictionaryEntry selectedEntry = null;
     private DictionaryEntry testedEntry = null;
@@ -159,7 +162,7 @@ public class VTrainer {
         //       propertyDialog = new PropertyDialog();
 
         if (!dictionaryFile.exists()) {
-            System.err.println("dictionary file " + dictionaryFile
+            logger.info("dictionary file " + dictionaryFile
                     + " does not exist, creating empty one");
             dictionary = new Dictionary();
             try {
@@ -231,7 +234,7 @@ public class VTrainer {
 
         searchTF.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                System.err.println(e);
+                logger.info(e.toString());
                 String searchTerm = searchTF.getText();
                 int matchingIndex = dictionary.getFirstEntryWithPrefixIndex(searchTerm);
                 if (matchingIndex != -1) {
@@ -240,7 +243,7 @@ public class VTrainer {
                     int numVisibleEntries = dictionaryLI.getLastVisibleIndex()
                             - dictionaryLI.getFirstVisibleIndex();
                     int computedIndex = Math.min(last, matchingIndex + numVisibleEntries - 1);
-                    System.err.println(searchTerm + " matching:" + matchingIndex + "("
+                    logger.info(searchTerm + " matching:" + matchingIndex + "("
                             + dictionary.getEntries().get(matchingIndex) + "), computed:"
                             + computedIndex);
                     // hack
@@ -299,9 +302,7 @@ public class VTrainer {
             }
         };
 
-        saveAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'s'));
-        saveAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(new Character(
-                's'), InputEvent.CTRL_MASK));
+        saveAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
 
         addEntryAction = new AbstractAction("Add Entry") {
             public void actionPerformed(ActionEvent ae) {
@@ -309,7 +310,7 @@ public class VTrainer {
             }
         };
 
-        addEntryAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'a'));
+        addEntryAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 
         editEntryAction = new AbstractAction("Edit Entry") {
             public void actionPerformed(ActionEvent ae) {
@@ -347,9 +348,7 @@ public class VTrainer {
             }
         };
 
-        exitAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'x'));
-        exitAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(new Character(
-                'x'), InputEvent.CTRL_MASK));
+        exitAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
 
         startTestAction = new AbstractAction("Start Test") {
             public void actionPerformed(ActionEvent ae) {
@@ -459,7 +458,7 @@ public class VTrainer {
     }
 
     private void save() throws IOException {
-        System.err.println("saving dictionary to " + dictionaryFile);
+        logger.info("saving dictionary to " + dictionaryFile);
         if (dictionaryFile.exists()) {
             File backup = new File(dictionaryFile.getCanonicalPath() + ".vtbak");
             try {
@@ -468,7 +467,7 @@ public class VTrainer {
                 ByteStreams.copy(new BufferedInputStream(new FileInputStream(dictionaryFile),
                         IOBUFSIZE), backupOutputStream);
                 backupOutputStream.close();
-                System.err.println("created backup in " + backup);
+                logger.info("created backup in " + backup);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(mainFrame, "creating backup in " + backup
                         + " failed " + ex, "backup error", JOptionPane.WARNING_MESSAGE);
@@ -495,7 +494,7 @@ public class VTrainer {
 
     private void initMenus() {
         JMenuBar mbar = new JMenuBar();
-        JMenu doMenu = new JMenu("Do Stuff");
+        JMenu doMenu = new JMenu("VTrainer");
         doMenu.add(saveAction);
         doMenu.add(addEntryAction);
         doMenu.addSeparator();
@@ -514,7 +513,7 @@ public class VTrainer {
         helpMenu.add(new AbstractAction("About") {
             public void actionPerformed(ActionEvent ae) {
                 String msg = "VTrainer v" + VERSION + "\n\n"
-                        + "Copyright 2002 - 2016 Robert Krueger";
+                        + "Copyright 2002 - 2022 Robert Krüger";
                 JOptionPane.showMessageDialog(mainFrame, msg, "About VTrainer",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -560,7 +559,7 @@ public class VTrainer {
     }
 
     public static void main(String[] argv) throws Exception {
-        System.out.println("starting VTrainer");
+        logger.info("starting VTrainer");
 
         //        try {
         //            UIManager.setLookAndFeel(new
@@ -727,7 +726,15 @@ public class VTrainer {
         }
 
         void addTranslation() {
-            selectedEntry.getTranslations().add(translationTF.getText());
+            final String text = translationTF.getText();
+            // allow comma-separated translations
+            final String[] components = text.split(",");
+            for (String comp : components){
+                comp = comp.trim();
+                if(!Strings.isNullOrEmpty(comp)) {
+                    selectedEntry.getTranslations().add(comp);
+                }
+            }
             translationTF.setText("");
             refreshTranslations();
             checkCanSubmit();
@@ -746,8 +753,12 @@ public class VTrainer {
                 refreshDictionary();
             }
 
-            saveAction.setEnabled(true);
-
+            //saveAction.setEnabled(true);
+            try {
+                save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             setVisible(false);
         }
 
