@@ -205,7 +205,7 @@ public class VTrainer {
             private void checkForPopup(MouseEvent e) {
                 int index = dictionaryLI.locationToIndex(e.getPoint());
                 if (index >= 0) {
-                    selectedEntry = (DictionaryEntry)dictionaryLM.get(index);
+                    selectedEntry = (DictionaryEntry) dictionaryLM.get(index);
                     if (e.isPopupTrigger()) {
                         entryMenu.show(e.getComponent(), e.getX(), e.getY());
                     }
@@ -216,7 +216,7 @@ public class VTrainer {
 
         dictionaryLI.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                selectedEntry = (DictionaryEntry)dictionaryLI.getSelectedValue();
+                selectedEntry = (DictionaryEntry) dictionaryLI.getSelectedValue();
             }
         });
 
@@ -450,7 +450,7 @@ public class VTrainer {
         if (testSet.isEmpty())
             return null;
 
-        testedEntry = (DictionaryEntry)testSet.remove(0);
+        testedEntry = (DictionaryEntry) testSet.remove(0);
 
         return testedEntry;
     }
@@ -559,14 +559,14 @@ public class VTrainer {
         logger.info("Rebuilding model with search term '" + searchText + "'");
 
         entries.stream().filter(e -> {
-            if(!Strings.isNullOrEmpty(searchText)){
-                if(e.getName().toLowerCase().contains(searchText)){
+            if (!Strings.isNullOrEmpty(searchText)) {
+                if (e.getName().toLowerCase().contains(searchText)) {
                     return true;
                 }
                 return false;
             }
             return true;
-        }).forEach( e -> dictionaryLM.addElement(e));
+        }).forEach(e -> dictionaryLM.addElement(e));
     }
 
     public static void main(String[] argv) throws Exception {
@@ -622,9 +622,9 @@ public class VTrainer {
             });
 
             final ActionListener addListener = e -> {
-                if(addBT.isEnabled()) {
+                if (addBT.isEnabled()) {
                     addTranslation();
-                } else if(!selectedEntry.getTranslations().isEmpty()){
+                } else if (!selectedEntry.getTranslations().isEmpty()) {
                     submit();
                 }
             };
@@ -666,7 +666,7 @@ public class VTrainer {
                 }
 
                 private void checkForPopup(MouseEvent e) {
-                    selectedTranslation = (String)translationLM.get(translationLI.locationToIndex(e
+                    selectedTranslation = (String) translationLM.get(translationLI.locationToIndex(e
                             .getPoint()));
                     if (e.isPopupTrigger()) {
                         translationMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -742,9 +742,9 @@ public class VTrainer {
             final String text = translationTF.getText();
             // allow comma-separated translations
             final String[] components = text.split(",");
-            for (String comp : components){
+            for (String comp : components) {
                 comp = comp.trim();
-                if(!Strings.isNullOrEmpty(comp)) {
+                if (!Strings.isNullOrEmpty(comp)) {
                     selectedEntry.getTranslations().add(comp);
                 }
             }
@@ -779,7 +779,7 @@ public class VTrainer {
             translationLM.removeAllElements();
 
             if (selectedEntry != null) {
-                for (Iterator it = selectedEntry.getTranslations().iterator(); it.hasNext();) {
+                for (Iterator it = selectedEntry.getTranslations().iterator(); it.hasNext(); ) {
                     translationLM.addElement(it.next());
                 }
             }
@@ -834,17 +834,17 @@ public class VTrainer {
             List sortedKeys = new ArrayList(data.keySet());
             Collections.sort(sortedKeys, new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    return ((String)o1).toLowerCase().compareTo(((String)o2).toLowerCase());
+                    return ((String) o1).toLowerCase().compareTo(((String) o2).toLowerCase());
                 }
             });
 
             Vector rows = new Vector();
 
-            for (Iterator it = sortedKeys.iterator(); it.hasNext();) {
-                String key = (String)it.next();
-                List translations = (List)data.get(key);
+            for (Iterator it = sortedKeys.iterator(); it.hasNext(); ) {
+                String key = (String) it.next();
+                List translations = (List) data.get(key);
                 for (int i = 0; i < translations.size(); i++) {
-                    String translation = (String)translations.get(i);
+                    String translation = (String) translations.get(i);
                     Vector row = new Vector();
                     if (i == 0) {
                         row.add(key);
@@ -918,7 +918,7 @@ public class VTrainer {
                 }
             });
 
-            showBT.addMouseListener(new MouseAdapter(){
+            showBT.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     previewTextArea.setText(String.join(System.getProperty("line.separator"), testedEntry.getTranslations()));
@@ -1002,11 +1002,11 @@ public class VTrainer {
                         setNewHighscore(numCorrectEntries);
                         refreshDictionary();
                         JOptionPane.showMessageDialog(mainFrame, "new highscore is "
-                                + numCorrectEntries, "new highscore",
+                                        + numCorrectEntries, "new highscore",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(mainFrame, "highscore remains at "
-                                + dictionary.getHighscore(), "no new highscore",
+                                        + dictionary.getHighscore(), "no new highscore",
                                 JOptionPane.WARNING_MESSAGE);
                     }
                 }
@@ -1123,16 +1123,16 @@ public class VTrainer {
                 return;
             }
 
-            Map.Entry entry = (Entry)wordIterator.next();
-            wordTF.setText((String)entry.getKey());
+            Map.Entry entry = (Entry) wordIterator.next();
+            wordTF.setText((String) entry.getKey());
             countTF.setText(wordIterator.previousIndex() + "/" + wordList.size());
-            translationIterator = ((List)entry.getValue()).iterator();
+            translationIterator = ((List) entry.getValue()).iterator();
             translationsTA.setText("");
         }
 
         void next() {
             if (translationIterator != null && translationIterator.hasNext()) {
-                translationsTA.append((String)translationIterator.next() + "\n");
+                translationsTA.append((String) translationIterator.next() + "\n");
             } else {
                 nextEntry();
             }

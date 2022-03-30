@@ -42,8 +42,8 @@ public class Dictionary {
         entries.add(d);
         Collections.sort(entries, new Comparator() {
             public int compare(Object o1, Object o2) {
-                DictionaryEntry d1 = (DictionaryEntry)o1;
-                DictionaryEntry d2 = (DictionaryEntry)o2;
+                DictionaryEntry d1 = (DictionaryEntry) o1;
+                DictionaryEntry d2 = (DictionaryEntry) o2;
 
                 return collator.compare(d1.getName(), d2.getName());
             }
@@ -53,7 +53,7 @@ public class Dictionary {
 
     private Integer getNextID() {
         Integer maxID = new Integer(0);
-        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext(); ) {
             DictionaryEntry d = it.next();
             Integer id = d.getID();
             if (id.intValue() > maxID.intValue()) {
@@ -70,8 +70,8 @@ public class Dictionary {
         xml.setAttribute("highscore", "" + highscore);
         xml.setAttribute("language", "" + locale.getLanguage());
 
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            DictionaryEntry de = (DictionaryEntry)it.next();
+        for (Iterator it = entries.iterator(); it.hasNext(); ) {
+            DictionaryEntry de = (DictionaryEntry) it.next();
             xml.addContent(de.toXML());
         }
 
@@ -92,8 +92,8 @@ public class Dictionary {
             System.out.println("dictionary language " + d.getLocale().getDisplayLanguage());
         }
 
-        for (Iterator it = e.getChildren("dictionary-entry").iterator(); it.hasNext();) {
-            d.getEntries().add(DictionaryEntry.createFromXML((Element)it.next()));
+        for (Iterator it = e.getChildren("dictionary-entry").iterator(); it.hasNext(); ) {
+            d.getEntries().add(DictionaryEntry.createFromXML((Element) it.next()));
         }
         return d;
     }
@@ -116,13 +116,13 @@ public class Dictionary {
         return forwardMap;
     }
 
-    private static class ListCandidate implements Comparable<ListCandidate>{
+    private static class ListCandidate implements Comparable<ListCandidate> {
 
         private final DictionaryEntry entry;
 
         public ListCandidate(DictionaryEntry entry) {
             this.entry = entry;
-            sortRank  = random.nextInt(30) + entry.getDifficulty();
+            sortRank = random.nextInt(30) + entry.getDifficulty();
         }
 
         // this is used for sorting, a bit of random + the difficulty as a boost
@@ -144,7 +144,7 @@ public class Dictionary {
 
         // special case for small dictionaries: if not enough entries remain we suspend the
         // last tested criterion
-        if(size > copy.size()){
+        if (size > copy.size()) {
             logger.info("Not enough candidates not tested recently, using full list");
             copy = new ArrayList<>(entries);
         }
@@ -160,7 +160,7 @@ public class Dictionary {
         Collections.sort(listCandidates);
         Collections.reverse(listCandidates);
         List<DictionaryEntry> randomList = new ArrayList<>();
-        for(int i=0;i<size;i++){
+        for (int i = 0; i < size; i++) {
             randomList.add(listCandidates.get(i).entry);
         }
         return randomList;
@@ -172,11 +172,11 @@ public class Dictionary {
         int avg = 0;
 
         if (entries.size() > 0) {
-            for (Iterator iter = entries.iterator(); iter.hasNext();) {
-                DictionaryEntry entry = (DictionaryEntry)iter.next();
+            for (Iterator iter = entries.iterator(); iter.hasNext(); ) {
+                DictionaryEntry entry = (DictionaryEntry) iter.next();
                 sum += entry.getDifficulty();
             }
-            avg = (int)((double)sum / (double)entries.size());
+            avg = (int) ((double) sum / (double) entries.size());
         }
 
         return avg;
@@ -185,13 +185,13 @@ public class Dictionary {
     public void refreshMaps() {
         forwardMap.clear();
         reverseMap.clear();
-        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext(); ) {
             DictionaryEntry entry = it.next();
             String name = entry.getName();
             forwardMap.put(name, entry);
-            for (Iterator itt = entry.getTranslations().iterator(); itt.hasNext();) {
-                String translation = (String)itt.next();
-                List reverseTranslations = (List)reverseMap.get(translation);
+            for (Iterator itt = entry.getTranslations().iterator(); itt.hasNext(); ) {
+                String translation = (String) itt.next();
+                List reverseTranslations = (List) reverseMap.get(translation);
                 if (reverseTranslations == null) {
                     reverseTranslations = new ArrayList();
                     reverseMap.put(translation, reverseTranslations);
@@ -202,7 +202,7 @@ public class Dictionary {
     }
 
     private DictionaryEntry getFirstEntryWithPrefix(String searchTerm) {
-        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext(); ) {
             DictionaryEntry entry = it.next();
             if (entry.getName().toLowerCase().startsWith(searchTerm.toLowerCase())) {
                 return entry;
@@ -212,7 +212,7 @@ public class Dictionary {
     }
 
     private DictionaryEntry getFirstEntryContaining(String searchTerm) {
-        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext(); ) {
             DictionaryEntry entry = it.next();
             if (entry.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
                 return entry;
@@ -222,7 +222,7 @@ public class Dictionary {
     }
 
     public DictionaryEntry getMatchingEntry(String searchTerm) {
-        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext();) {
+        for (Iterator<DictionaryEntry> it = entries.iterator(); it.hasNext(); ) {
             DictionaryEntry entry = it.next();
             if (entry.getName().equalsIgnoreCase(searchTerm)) {
                 return entry;

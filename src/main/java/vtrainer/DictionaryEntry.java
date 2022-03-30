@@ -94,7 +94,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
         boolean found = false;
 
-        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+        for (Iterator<String> it = translations.iterator(); it.hasNext(); ) {
             String t = it.next();
             found = t.equalsIgnoreCase(text.trim());
             if (found)
@@ -119,7 +119,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
             xml.setAttribute(CREATED_ATTR, "" + getCreated());
         }
 
-        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+        for (Iterator<String> it = translations.iterator(); it.hasNext(); ) {
             String t = it.next();
             Element txml = new Element(TRANSLATION_ELEM);
             txml.setText(t);
@@ -155,8 +155,8 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
                     .getAttributeValue(CREATED_ATTR)));
         }
 
-        for (Iterator it = e.getChildren(TRANSLATION_ELEM).iterator(); it.hasNext();) {
-            Element te = (Element)it.next();
+        for (Iterator it = e.getChildren(TRANSLATION_ELEM).iterator(); it.hasNext(); ) {
+            Element te = (Element) it.next();
             if (!"".equals(te.getText())) {
                 de.getTranslations().add(te.getText());
             }
@@ -177,7 +177,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
         String msg = getName() + "\n\n";
 
-        for (Iterator<String> it = translations.iterator(); it.hasNext();) {
+        for (Iterator<String> it = translations.iterator(); it.hasNext(); ) {
             String t = it.next();
             msg += " - " + t + "\n";
         }
@@ -195,10 +195,11 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
     public static class DifficultyWithRandomComparator implements Comparator {
         private static Random random = new Random(System.currentTimeMillis());
+
         public int compare(Object o1, Object o2) {
-            Integer d1 = new Integer(((DictionaryEntry)o1).getDifficulty());
-            Integer d2 = new Integer(((DictionaryEntry)o2).getDifficulty());
-            int randomNoise = (int)(10.0 * random.nextDouble());
+            Integer d1 = new Integer(((DictionaryEntry) o1).getDifficulty());
+            Integer d2 = new Integer(((DictionaryEntry) o2).getDifficulty());
+            int randomNoise = (int) (10.0 * random.nextDouble());
             return d1.compareTo(d2 + randomNoise);
         }
     }
