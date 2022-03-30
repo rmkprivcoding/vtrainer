@@ -2,6 +2,7 @@ package vtrainer;
 
 import java.text.Collator;
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.google.common.collect.Iterables;
 import org.jdom.Element;
@@ -9,8 +10,9 @@ import org.jdom.Element;
 public class Dictionary {
 
     // minimum time between testing the same word (in ms)
-    // currently 10 hours
-    private static final int MIN_TEST_DISTANCE = 1000 * 60 * 60 * 10;
+    // currently 15 minutes
+    private static final int MIN_TEST_DISTANCE = 1000 * 60 * 15;
+    private static final Logger logger = Logger.getLogger(Dictionary.class.getSimpleName());
     private static Random random = new Random(System.currentTimeMillis());
     private List<DictionaryEntry> entries = new ArrayList<>();
     private int highscore = 0;
@@ -31,7 +33,7 @@ public class Dictionary {
         this.highscore = highscore;
     }
 
-    public List getEntries() {
+    public List<DictionaryEntry> getEntries() {
         return entries;
     }
 
@@ -138,10 +140,12 @@ public class Dictionary {
         // first eliminate all entries that have been asked recently
         long lastAllowed = System.currentTimeMillis() - MIN_TEST_DISTANCE;
         Iterables.removeIf(copy, (e) -> e.getLastTested() > lastAllowed);
+        Iterables.removeIf(copy, (e) -> e.getCreated() > lastAllowed);
 
         // special case for small dictionaries: if not enough entries remain we suspend the
         // last tested criterion
         if(size > copy.size()){
+            logger.info("Not enough candidates not tested recently, using full list");
             copy = new ArrayList<>(entries);
         }
 

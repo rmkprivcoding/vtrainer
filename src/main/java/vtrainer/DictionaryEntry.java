@@ -12,6 +12,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
     private static final String DIFFICULTY_ATTR = "difficulty";
     private static final String LAST_TESTED_ATTR = "last-tested";
+    private static final String CREATED_ATTR = "created";
     private static final String TRANSLATION_ELEM = "translation";
     private static final String NOTES_ELEM = "notes";
     private static final String NAME_ATTR = "name";
@@ -23,6 +24,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     private String notes = null;
     private List<String> translations = new ArrayList<>();
     private long lastTested = 0l;
+    private long created = 0l;
 
     private int difficulty = 0;
 
@@ -61,7 +63,15 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     public void addToDifficulty(int delta) {
         difficulty += delta;
         // never let difficulty become negative
-        difficulty = Math.max(difficulty, 0);
+        //difficulty = Math.max(difficulty, 0);
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
     }
 
     public long getLastTested() {
@@ -105,6 +115,9 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         if (getLastTested() != 0) {
             xml.setAttribute(LAST_TESTED_ATTR, "" + getLastTested());
         }
+        if (getCreated() != 0) {
+            xml.setAttribute(CREATED_ATTR, "" + getCreated());
+        }
 
         for (Iterator<String> it = translations.iterator(); it.hasNext();) {
             String t = it.next();
@@ -135,6 +148,11 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         if (e.getAttribute(LAST_TESTED_ATTR) != null) {
             de.setLastTested(Long.parseLong(e
                     .getAttributeValue(LAST_TESTED_ATTR)));
+        }
+
+        if (e.getAttribute(CREATED_ATTR) != null) {
+            de.setCreated(Long.parseLong(e
+                    .getAttributeValue(CREATED_ATTR)));
         }
 
         for (Iterator it = e.getChildren(TRANSLATION_ELEM).iterator(); it.hasNext();) {

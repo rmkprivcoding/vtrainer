@@ -5,15 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -37,6 +29,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -89,9 +82,10 @@ public class VTrainer {
     // a test is only started after this minimum number of entries have been made
     private static final int MIN_DICTIONARY_SIZE = 20;
     // the difficulty value is increased by this for each test failure for the respective word
-    private static final int INC_DIFFICULTY_PER_FAILURE = 5;
+    private static final int INC_DIFFICULTY_PER_FAILURE = 2;
     // the difficulty value is decreased by this for each correct answer for the respective word in a test
     private static final int DEC_DIFFICULTY_PER_CORRECT_ANSWER = 2;
+    private static final int DEC_DIFFICULTY_PER_I_REALLY_KNOW_ANSWER = 10;
     private static final int IOBUFSIZE = 20000;
     private static final int FLASH_INTERVAL = 400;
 
@@ -235,6 +229,8 @@ public class VTrainer {
         searchTF.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 logger.info(e.toString());
+                rebuildModel();
+/*
                 String searchTerm = searchTF.getText();
                 int matchingIndex = dictionary.getFirstEntryWithPrefixIndex(searchTerm);
                 if (matchingIndex != -1) {
@@ -252,6 +248,7 @@ public class VTrainer {
                 } else {
                     searchTF.setForeground(Color.RED);
                 }
+*/
             }
         });
 
@@ -356,7 +353,7 @@ public class VTrainer {
             }
         };
 
-        startTestAction.putValue(AbstractAction.MNEMONIC_KEY, new Integer((int)'t'));
+        startTestAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK));
 
         attemptHighscoreAction = new AbstractAction("Attempt Highscore") {
             public void actionPerformed(ActionEvent ae) {
@@ -415,6 +412,7 @@ public class VTrainer {
 
     private void addEntry() {
         selectedEntry = new DictionaryEntry();
+        selectedEntry.setCreated(System.currentTimeMillis());
         editDictionaryEntryDialog.refresh();
         editDictionaryEntryDialog.setVisible(true);
         saveAction.setEnabled(true);
@@ -544,18 +542,31 @@ public class VTrainer {
     private void refreshDictionary() {
         checkCanAddEntry();
         checkCanStartTest();
-        dictionaryLM.removeAllElements();
-
-        List entries = dictionary.getEntries();
-
-        for (Iterator it = entries.iterator(); it.hasNext();) {
-            dictionaryLM.addElement(it.next());
-        }
+        rebuildModel();
 
         scoreTF.setText("" + dictionary.getEntries().size() + " entries, highscore "
                 + dictionary.getHighscore());
 
         dictionary.refreshMaps();
+    }
+
+    private void rebuildModel() {
+        dictionaryLM.removeAllElements();
+
+        List<DictionaryEntry> entries = dictionary.getEntries();
+
+        String searchText = searchTF.getText().trim().toLowerCase();
+        logger.info("Rebuilding model with search term '" + searchText + "'");
+
+        entries.stream().filter(e -> {
+            if(!Strings.isNullOrEmpty(searchText)){
+                if(e.getName().toLowerCase().contains(searchText)){
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }).forEach( e -> dictionaryLM.addElement(e));
     }
 
     public static void main(String[] argv) throws Exception {
@@ -613,6 +624,8 @@ public class VTrainer {
             final ActionListener addListener = e -> {
                 if(addBT.isEnabled()) {
                     addTranslation();
+                } else if(!selectedEntry.getTranslations().isEmpty()){
+                    submit();
                 }
             };
             translationTF.addActionListener(addListener);
@@ -792,6 +805,8 @@ public class VTrainer {
             checkCanSubmit();
 
             addBT.setEnabled(false);
+
+            nameTF.requestFocus();
         }
     }
 
@@ -854,6 +869,10 @@ public class VTrainer {
         private JTextField inputTF = new JTextField(20);
         private JButton okBT = new JButton("OK");
         private JButton cancelBT = new JButton("cancel");
+        private JButton correctBT = new JButton("I know");
+        private JButton correctDamnBT = new JButton("I really know");
+        private JButton showBT = new JButton("show");
+        private JTextArea previewTextArea = new JTextArea(3, 30);
 
         public TestDialog(JFrame ownerFrame) {
             super(ownerFrame, "Test", true);
@@ -861,6 +880,18 @@ public class VTrainer {
             basePanel.setLayout(new BorderLayout());
 
             nameTF.setEditable(false);
+
+            correctBT.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    submit(true, false);
+                }
+            });
+
+            correctDamnBT.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    submit(true, true);
+                }
+            });
 
             inputTF.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent e) {
@@ -870,7 +901,7 @@ public class VTrainer {
 
             inputTF.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    submit();
+                    submit(false, false);
                 }
             });
 
@@ -883,7 +914,19 @@ public class VTrainer {
 
             okBT.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    submit();
+                    submit(false, false);
+                }
+            });
+
+            showBT.addMouseListener(new MouseAdapter(){
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    previewTextArea.setText(String.join(System.getProperty("line.separator"), testedEntry.getTranslations()));
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    previewTextArea.setText("");
                 }
             });
 
@@ -901,6 +944,10 @@ public class VTrainer {
             JPanel bottomPanel = new JPanel();
             bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
             bottomPanel.add(Box.createHorizontalGlue());
+            bottomPanel.add(previewTextArea);
+            bottomPanel.add(showBT);
+            bottomPanel.add(correctBT);
+            bottomPanel.add(correctDamnBT);
             bottomPanel.add(okBT);
             bottomPanel.add(cancelBT);
 
@@ -919,10 +966,10 @@ public class VTrainer {
             inputTF.requestFocus();
         }
 
-        void submit() {
+        void submit(boolean assumeCorrect, boolean reallyKnown) {
             testedEntry.setLastTested(System.currentTimeMillis());
-            if (testedEntry.isTranslation(inputTF.getText())) {
-                testedEntry.addToDifficulty(-DEC_DIFFICULTY_PER_CORRECT_ANSWER);
+            if (assumeCorrect || testedEntry.isTranslation(inputTF.getText())) {
+                testedEntry.addToDifficulty(reallyKnown ? -DEC_DIFFICULTY_PER_I_REALLY_KNOW_ANSWER : -DEC_DIFFICULTY_PER_CORRECT_ANSWER);
                 numCorrect++;
                 JOptionPane.showMessageDialog(mainFrame, testedEntry.toLargeString(), "correct",
                         JOptionPane.INFORMATION_MESSAGE);
