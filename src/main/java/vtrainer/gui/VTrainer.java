@@ -1,61 +1,5 @@
 package vtrainer.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.event.*;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyEditorManager;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Vector;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.Timer;
-import javax.swing.event.*;
-import javax.swing.table.DefaultTableModel;
-
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import org.jdom.Document;
@@ -63,12 +7,25 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 import vtrainer.Dictionary;
 import vtrainer.DictionaryEntry;
 import vtrainer.util.DocumentChangeListener;
 import vtrainer.util.IntEditor;
-import vtrainer.util.PropertySheet;
+
+import javax.swing.Timer;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.beans.PropertyEditorManager;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 public class VTrainer {
 
@@ -377,12 +334,6 @@ public class VTrainer {
             }
         };
 
-        //        editPropertiesAction = new AbstractAction("edit properties") {
-        //            public void actionPerformed(ActionEvent ae) {
-        //                propertyDialog.show();
-        //            }
-        //        };
-
     }
 
     private boolean checkExit() {
@@ -503,8 +454,6 @@ public class VTrainer {
         doMenu.add(showReverseTranslationTableAction);
         doMenu.add(startFlashAction);
         doMenu.addSeparator();
-        //        doMenu.add(editPropertiesAction);
-        //        doMenu.addSeparator();
         doMenu.add(exitAction);
         mbar.add(doMenu);
 
@@ -1027,11 +976,7 @@ public class VTrainer {
         private ListIterator wordIterator = null;
         private List wordList = null;
 
-        private Timer flashTimer = new Timer(flashInterval, new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                next();
-            }
-        });
+        private Timer flashTimer = new Timer(flashInterval, ae -> next());
 
         public FlashLearnerDialog(JFrame ownerFrame) {
             super(ownerFrame, "Reverse Translation Flash", true);
@@ -1138,66 +1083,6 @@ public class VTrainer {
                 nextEntry();
             }
         }
-
-    }
-
-    private class PropertyDialog extends JDialog {
-        public PropertyDialog() {
-            super(mainFrame, "Properties");
-            JPanel mainPanel = new JPanel();
-            mainPanel.setLayout(new BorderLayout());
-            BeanInfo bi = null;
-            try {
-                bi = Introspector.getBeanInfo(VTrainer.class, Object.class);
-            } catch (IntrospectionException e) {
-                throw new IllegalStateException("failed to get BeanInfo for VTrainer.class" + e);
-            }
-            final PropertySheet psheet = new PropertySheet(bi);
-            psheet.setObject(VTrainer.this);
-            mainPanel.add(psheet, BorderLayout.CENTER);
-
-            JPanel controlPanel = new JPanel();
-            controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
-            controlPanel.add(new JButton(new AbstractAction("reset") {
-                public void actionPerformed(ActionEvent ae) {
-                    psheet.resetIssued(ae);
-                }
-            }));
-
-            controlPanel.add(new JButton(new AbstractAction("apply") {
-                public void actionPerformed(ActionEvent ae) {
-                    psheet.applyChangesIssued(ae);
-                }
-            }));
-
-            controlPanel.add(Box.createHorizontalGlue());
-
-            controlPanel.add(new JButton(new AbstractAction("cancel") {
-                public void actionPerformed(ActionEvent ae) {
-                    psheet.resetIssued(ae);
-                    hide();
-                }
-
-            }));
-            controlPanel.add(new JButton(new AbstractAction("OK") {
-                public void actionPerformed(ActionEvent ae) {
-                    psheet.applyChangesIssued(ae);
-                    hide();
-                }
-            }));
-
-            mainPanel.add(controlPanel, BorderLayout.SOUTH);
-            getContentPane().add(mainPanel);
-            pack();
-        }
-    }
-
-    public int getFlashInterval() {
-        return flashInterval;
-    }
-
-    public void setFlashInterval(int flashInterval) {
-        this.flashInterval = flashInterval;
     }
 
 }
