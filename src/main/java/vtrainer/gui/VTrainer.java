@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -87,7 +86,7 @@ public class VTrainer {
     private static final int DEC_DIFFICULTY_PER_CORRECT_ANSWER = 2;
     private static final int DEC_DIFFICULTY_PER_I_REALLY_KNOW_ANSWER = 10;
     private static final int IOBUFSIZE = 20000;
-    private static final int FLASH_INTERVAL = 400;
+    private static final int FLASH_DEFAULT_INTERVAL = 400;
 
     private final JFrame mainFrame;
     private final File dictionaryFile;
@@ -122,7 +121,7 @@ public class VTrainer {
     private List testSet = null;
     private int numCorrect = 0;
 
-    private int flashInterval = FLASH_INTERVAL;
+    private int flashInterval = FLASH_DEFAULT_INTERVAL;
 
     private boolean highscoreMode = false;
     private static final int NEW_ENTRY_AVG_DIFFICULTY_DELTA = 4;
@@ -1026,7 +1025,7 @@ public class VTrainer {
         private ListIterator wordIterator = null;
         private List wordList = null;
 
-        private Timer flashTimer = new Timer(FLASH_INTERVAL, new ActionListener() {
+        private Timer flashTimer = new Timer(FLASH_DEFAULT_INTERVAL, new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 next();
             }
@@ -1083,11 +1082,9 @@ public class VTrainer {
             intervalSlider.setMinorTickSpacing(100);
             intervalSlider.setInverted(true);
             intervalSlider.setSnapToTicks(true);
-            intervalSlider.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent ce) {
-                    flashInterval = intervalSlider.getValue();
-                    flashTimer.setDelay(flashInterval);
-                }
+            intervalSlider.addChangeListener(ce -> {
+                flashInterval = intervalSlider.getValue();
+                flashTimer.setDelay(flashInterval);
             });
 
             controlPanel.add(intervalSlider);
