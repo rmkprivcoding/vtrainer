@@ -121,7 +121,7 @@ public class VTrainer {
     private List testSet = null;
     private int numCorrect = 0;
 
-    private int flashInterval = FLASH_DEFAULT_INTERVAL;
+    private int flashInterval;
 
     private boolean highscoreMode = false;
     private static final int NEW_ENTRY_AVG_DIFFICULTY_DELTA = 4;
@@ -148,12 +148,6 @@ public class VTrainer {
         initActions();
         initMenus();
 
-        editDictionaryEntryDialog = new EditDictionaryEntryDialog(mainFrame);
-        testDialog = new TestDialog(mainFrame);
-        translationDialog = new TranslationDialog(mainFrame);
-        flashDialogue = new FlashLearnerDialog(mainFrame);
-        //       propertyDialog = new PropertyDialog();
-
         if (!dictionaryFile.exists()) {
             logger.info("dictionary file " + dictionaryFile
                     + " does not exist, creating empty one");
@@ -170,6 +164,14 @@ public class VTrainer {
                 throw new RuntimeException("Error loading state", ex);
             }
         }
+
+        flashInterval = dictionary.getFlashInterval() > 0 ? dictionary.getFlashInterval() : FLASH_DEFAULT_INTERVAL;
+
+        editDictionaryEntryDialog = new EditDictionaryEntryDialog(mainFrame);
+        testDialog = new TestDialog(mainFrame);
+        translationDialog = new TranslationDialog(mainFrame);
+        flashDialogue = new FlashLearnerDialog(mainFrame);
+        //       propertyDialog = new PropertyDialog();
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -385,7 +387,7 @@ public class VTrainer {
 
     private boolean checkExit() {
         if (saveAction.isEnabled()) {
-            int option = JOptionPane.showConfirmDialog(mainFrame, "Save dictionary and score",
+            int option = JOptionPane.showConfirmDialog(mainFrame, "Save dictionary",
                     "Save", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 try {
@@ -1020,12 +1022,12 @@ public class VTrainer {
         private JTextField wordTF = new JTextField(30);
         private JTextField countTF = new JTextField(10);
         private JTextArea translationsTA = new JTextArea(5, 30);
-        private JSlider intervalSlider = new JSlider(100, 2000, flashInterval);
+        private JSlider intervalSlider = new JSlider(100, 4000, flashInterval);
         private Iterator translationIterator = null;
         private ListIterator wordIterator = null;
         private List wordList = null;
 
-        private Timer flashTimer = new Timer(FLASH_DEFAULT_INTERVAL, new ActionListener() {
+        private Timer flashTimer = new Timer(flashInterval, new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 next();
             }
@@ -1085,6 +1087,8 @@ public class VTrainer {
             intervalSlider.addChangeListener(ce -> {
                 flashInterval = intervalSlider.getValue();
                 flashTimer.setDelay(flashInterval);
+                dictionary.setFlashInterval(flashInterval);
+                saveAction.setEnabled(true);
             });
 
             controlPanel.add(intervalSlider);

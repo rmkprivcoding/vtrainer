@@ -16,6 +16,7 @@ public class Dictionary {
     private static Random random = new Random(System.currentTimeMillis());
     private List<DictionaryEntry> entries = new ArrayList<>();
     private int highscore = 0;
+    private int flashInterval = 0;
     private Map<String, List<String>> reverseMap = new HashMap<>();
     private Map<String, DictionaryEntry> forwardMap = new HashMap<>();
     private Locale locale = Locale.getDefault();
@@ -31,6 +32,14 @@ public class Dictionary {
 
     public void setHighscore(int highscore) {
         this.highscore = highscore;
+    }
+
+    public int getFlashInterval() {
+        return flashInterval;
+    }
+
+    public void setFlashInterval(int flashInterval) {
+        this.flashInterval = flashInterval;
     }
 
     public List<DictionaryEntry> getEntries() {
@@ -68,6 +77,9 @@ public class Dictionary {
         Element xml = new Element("dictionary");
 
         xml.setAttribute("highscore", "" + highscore);
+        if (flashInterval > 0) {
+            xml.setAttribute("flashInterval", "" + flashInterval);
+        }
         xml.setAttribute("language", "" + locale.getLanguage());
 
         for (Iterator it = entries.iterator(); it.hasNext(); ) {
@@ -84,6 +96,11 @@ public class Dictionary {
         String highscoreVal = e.getAttributeValue("highscore");
         if (highscoreVal != null) {
             d.setHighscore(Integer.parseInt(highscoreVal));
+        }
+
+        String flashIntervakVal = e.getAttributeValue("flashInterval");
+        if (flashIntervakVal != null) {
+            d.setFlashInterval(Integer.parseInt(flashIntervakVal));
         }
 
         String languageValue = e.getAttributeValue("language");
