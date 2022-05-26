@@ -36,7 +36,7 @@ public class VTrainer {
     private static final String DEFAULT_DICTIONARY_FILE_NAME = "vtrainer.xml";
     private static final int TEST_SET_SIZE = 5;
     // a test is only started after this minimum number of entries have been made
-    private static final int MIN_DICTIONARY_SIZE = 20;
+    private static final int MIN_DICTIONARY_SIZE = 10;
     // the difficulty value is increased by this for each test failure for the respective word
     private static final int INC_DIFFICULTY_PER_FAILURE = 2;
     // the difficulty value is decreased by this for each correct answer for the respective word in a test
