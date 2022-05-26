@@ -7,8 +7,11 @@ buildscript {
   }
 }
 
-apply plugin: 'java'
-apply plugin: 'application'
+plugins {
+  id "com.github.johnrengelman.shadow" version "7.1.2"
+  id "java"
+  id "application"
+}
 
 mainClassName = 'vtrainer.gui.VTrainer'
 
