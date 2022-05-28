@@ -973,8 +973,9 @@ public class VTrainer {
         private JTextArea translationsTA = new JTextArea(5, 30);
         private JSlider intervalSlider = new JSlider(100, 4000, flashInterval);
         private Iterator translationIterator = null;
-        private ListIterator wordIterator = null;
-        private List wordList = null;
+        private List<Map.Entry<String, List<String>>> wordList = null;
+
+        private int currentIndex = 0;
 
         private Timer flashTimer = new Timer(flashInterval, ae -> next());
 
@@ -1013,10 +1014,20 @@ public class VTrainer {
                     pauseRestart();
                 }
             }));
-
-            controlPanel.add(new JButton(new AbstractAction("stop") {
+            controlPanel.add(new JButton(new AbstractAction("<") {
                 public void actionPerformed(ActionEvent ae) {
-                    stop();
+                    previousEntry();
+                }
+            }));
+            controlPanel.add(new JButton(new AbstractAction(">") {
+                public void actionPerformed(ActionEvent ae) {
+                    nextEntry();
+                }
+            }));
+
+            controlPanel.add(new JButton(new AbstractAction("close") {
+                public void actionPerformed(ActionEvent ae) {
+                    close();
                 }
             }));
 
@@ -1052,26 +1063,52 @@ public class VTrainer {
         }
 
         public void newFlash() {
-            Map reverseMap = dictionary.getReverseMap();
+            Map<String, List<String>> reverseMap = dictionary.getReverseMap();
             wordList = new ArrayList(reverseMap.entrySet());
             Collections.shuffle(wordList);
-            wordIterator = wordList.listIterator();
+            currentIndex = 0;
+            setActiveEntry();
         }
 
-        private void stop() {
+        private void close() {
             flashTimer.stop();
-            setVisible(true);
+            setVisible(false);
         }
 
-        private void nextEntry() {
-            if (!wordIterator.hasNext()) {
-                stop();
+        private void previousEntry() {
+            if (currentIndex == 0) {
                 return;
             }
 
-            Map.Entry entry = (Entry) wordIterator.next();
+            boolean wasRunning = flashTimer.isRunning();
+            flashTimer.stop();
+            currentIndex--;
+            setActiveEntry();
+            if(wasRunning) {
+                flashTimer.restart();
+            }
+        }
+
+        private void nextEntry() {
+            if (currentIndex >= wordList.size()) {
+                close();
+                return;
+            }
+
+            boolean wasRunning = flashTimer.isRunning();
+            flashTimer.stop();
+            currentIndex++;
+            setActiveEntry();
+            if(wasRunning) {
+                flashTimer.restart();
+            }
+        }
+
+        private void setActiveEntry() {
+            Entry entry = wordList.get(currentIndex);
+            logger.info("Setting active entry to " + entry.getKey());
             wordTF.setText((String) entry.getKey());
-            countTF.setText(wordIterator.previousIndex() + "/" + wordList.size());
+            countTF.setText(currentIndex + 1 + "/" + wordList.size());
             translationIterator = ((List) entry.getValue()).iterator();
             translationsTA.setText("");
         }
