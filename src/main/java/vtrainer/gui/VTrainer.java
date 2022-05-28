@@ -594,7 +594,7 @@ public class VTrainer {
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
             topPanel.add(Box.createHorizontalGlue());
-            topPanel.add(new JLabel("Name"));
+            topPanel.add(new JLabel("Word"));
             topPanel.add(nameTF);
             topPanel.add(Box.createHorizontalStrut(20));
             topPanel.add(new JLabel("Translation"));
