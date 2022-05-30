@@ -782,6 +782,7 @@ public class VTrainer {
 
         public void setData(Map data) {
             List sortedKeys = new ArrayList(data.keySet());
+            Collator collator = dictionary.getCollator();
             Collections.sort(sortedKeys, new Comparator() {
                 public int compare(Object o1, Object o2) {
                     return ((String) o1).toLowerCase().compareTo(((String) o2).toLowerCase());
@@ -1090,8 +1091,8 @@ public class VTrainer {
         }
 
         private void nextEntry() {
-            if (currentIndex >= wordList.size()) {
-                close();
+            if (currentIndex >= wordList.size() - 1) {
+                flashTimer.stop();
                 return;
             }
 
