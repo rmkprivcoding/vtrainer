@@ -822,6 +822,7 @@ public class VTrainer {
         private JButton okBT = new JButton("OK");
         private JButton cancelBT = new JButton("cancel");
         private JButton correctBT = new JButton("I know");
+        private JButton dunnoBT = new JButton("I don't know");
         private JButton correctDamnBT = new JButton("I really know");
         private JButton showBT = new JButton("show");
         private JTextArea previewTextArea = new JTextArea(3, 30);
@@ -838,7 +839,11 @@ public class VTrainer {
                     submit(true, false);
                 }
             });
-
+            dunnoBT.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    submit(false, false);
+                }
+            });
             correctDamnBT.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     submit(true, true);
@@ -900,6 +905,7 @@ public class VTrainer {
             bottomPanel.add(showBT);
             bottomPanel.add(correctBT);
             bottomPanel.add(correctDamnBT);
+            bottomPanel.add(dunnoBT);
             bottomPanel.add(okBT);
             bottomPanel.add(cancelBT);
 
