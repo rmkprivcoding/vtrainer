@@ -920,6 +920,7 @@ public class VTrainer {
         }
 
         void refresh() {
+            setTitle("Test, score:" + numCorrect);
             nameTF.setText(testedEntry.getName());
             inputTF.setText("");
             inputTF.requestFocus();
@@ -948,7 +949,6 @@ public class VTrainer {
                         addEntry();
                     }
                 }
-                setTitle("Test, score:" + numCorrect);
                 refresh();
             } else {
                 JOptionPane.showMessageDialog(mainFrame, testedEntry.toLargeString(),
