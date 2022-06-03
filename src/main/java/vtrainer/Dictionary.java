@@ -26,6 +26,10 @@ public class Dictionary {
         collator.setStrength(Collator.PRIMARY);
     }
 
+    public Collator getCollator() {
+        return collator;
+    }
+
     public int getHighscore() {
         return highscore;
     }

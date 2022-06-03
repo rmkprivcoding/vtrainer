@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyEditorManager;
 import java.io.*;
+import java.text.Collator;
 import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
@@ -785,7 +786,7 @@ public class VTrainer {
             Collator collator = dictionary.getCollator();
             Collections.sort(sortedKeys, new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    return ((String) o1).toLowerCase().compareTo(((String) o2).toLowerCase());
+                    return collator.compare(((String) o1).toLowerCase(), ((String) o2).toLowerCase());
                 }
             });
 
