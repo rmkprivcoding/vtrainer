@@ -321,6 +321,7 @@ public class VTrainer {
                 setHighscoreMode(false);
             }
         };
+        attemptHighscoreAction.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
 
         showReverseTranslationTableAction = new AbstractAction("Show Reverse Translations") {
             public void actionPerformed(ActionEvent ae) {
