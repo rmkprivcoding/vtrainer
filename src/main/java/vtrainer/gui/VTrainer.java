@@ -45,6 +45,9 @@ public class VTrainer {
     private static final int DEC_DIFFICULTY_PER_I_REALLY_KNOW_ANSWER = 10;
     private static final int IOBUFSIZE = 20000;
     private static final int FLASH_DEFAULT_INTERVAL = 400;
+    public static final String LABEL_WORD_PHRASE = "Word/Phrase";
+    public static final String LABEL_TRANSLATION = "Translation";
+    public static final String LABEL_TRANSLATIONS = "Translation(s)";
 
     private final JFrame mainFrame;
     private final File dictionaryFile;
@@ -596,10 +599,10 @@ public class VTrainer {
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
             topPanel.add(Box.createHorizontalGlue());
-            topPanel.add(new JLabel("Word"));
+            topPanel.add(new JLabel(LABEL_WORD_PHRASE));
             topPanel.add(nameTF);
             topPanel.add(Box.createHorizontalStrut(20));
-            topPanel.add(new JLabel("Translation"));
+            topPanel.add(new JLabel(LABEL_TRANSLATION));
             topPanel.add(translationTF);
             topPanel.add(Box.createHorizontalGlue());
             topPanel.add(addBT);
@@ -634,7 +637,7 @@ public class VTrainer {
 
             JPanel listPanel = new JPanel();
             listPanel.setLayout(new BorderLayout());
-            listPanel.add(new JLabel("Translations"), BorderLayout.NORTH);
+            listPanel.add(new JLabel(LABEL_TRANSLATIONS), BorderLayout.NORTH);
             listPanel.add(tScrollPane, BorderLayout.CENTER);
 
             centerPanel.add(listPanel);
@@ -810,7 +813,7 @@ public class VTrainer {
             }
 
             Vector labels = new Vector();
-            labels.add("Word");
+            labels.add("Word/Phrase");
             labels.add("Translation");
             model.setDataVector(rows, labels);
         }
@@ -891,7 +894,7 @@ public class VTrainer {
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
             topPanel.add(Box.createHorizontalGlue());
-            topPanel.add(new JLabel("Word"));
+            topPanel.add(new JLabel("Word/Phrase"));
             topPanel.add(nameTF);
             topPanel.add(Box.createHorizontalStrut(20));
             topPanel.add(new JLabel("Translation"));
@@ -1003,7 +1006,7 @@ public class VTrainer {
             basePanel.setLayout(mainLayout);
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-            JLabel wordLB = new JLabel("Word");
+            JLabel wordLB = new JLabel("Word/Phrase");
 
             //mainPanel.add(wordLB);
             mainPanel.add(wordTF);
