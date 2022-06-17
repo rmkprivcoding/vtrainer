@@ -54,6 +54,7 @@ public class VTrainer {
     private Dictionary dictionary = null;
     private DictionaryEntry selectedEntry = null;
     private DictionaryEntry testedEntry = null;
+    private boolean testInverseDirection;
     private Action saveAction = null;
     private Action addEntryAction = null;
     private Action editEntryAction = null;
@@ -408,6 +409,8 @@ public class VTrainer {
             return null;
 
         testedEntry = (DictionaryEntry) testSet.remove(0);
+
+        testInverseDirection = !testInverseDirection;
 
         return testedEntry;
     }
@@ -882,7 +885,7 @@ public class VTrainer {
             showBT.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    previewTextArea.setText(String.join(System.getProperty("line.separator"), testedEntry.getTranslations()));
+                    previewTextArea.setText(testInverseDirection ? testedEntry.getName() : String.join(System.getProperty("line.separator"), testedEntry.getTranslations()));
                 }
 
                 @Override
@@ -924,14 +927,14 @@ public class VTrainer {
 
         void refresh() {
             setTitle("Test, score:" + numCorrect);
-            nameTF.setText(testedEntry.getName());
+            nameTF.setText(testInverseDirection ? testedEntry.getRandomTranslation() : testedEntry.getName());
             inputTF.setText("");
             inputTF.requestFocus();
         }
 
         void submit(boolean assumeCorrect, boolean reallyKnown) {
             testedEntry.setLastTested(System.currentTimeMillis());
-            if (assumeCorrect || testedEntry.isTranslation(inputTF.getText())) {
+            if (assumeCorrect || inputIsTranslation()) {
                 testedEntry.addToDifficulty(reallyKnown ? -DEC_DIFFICULTY_PER_I_REALLY_KNOW_ANSWER : -DEC_DIFFICULTY_PER_CORRECT_ANSWER);
                 numCorrect++;
                 JOptionPane.showMessageDialog(mainFrame, testedEntry.toLargeString(), "correct",
@@ -975,6 +978,11 @@ public class VTrainer {
 
                 setVisible(false);
             }
+        }
+
+        private boolean inputIsTranslation() {
+            String input = inputTF.getText();
+            return testInverseDirection ? input.equalsIgnoreCase(testedEntry.getName()) : testedEntry.isTranslation(input);
         }
     }
 

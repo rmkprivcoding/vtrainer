@@ -1,10 +1,6 @@
 package vtrainer;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import org.jdom.Element;
 
@@ -18,6 +14,8 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     private static final String NAME_ATTR = "name";
     private static final String ID_ATTR = "id";
     private static final String DICTIONARY_ENTRY_ELEM = "dictionary-entry";
+
+    private static final Random random = new Random(System.currentTimeMillis());
 
     private Integer id = null;
     private String name;
@@ -84,6 +82,10 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
     public List<String> getTranslations() {
         return translations;
+    }
+
+    public String getRandomTranslation(){
+        return translations.get(random.nextInt(translations.size()));
     }
 
     public boolean isTranslation(String text) {
