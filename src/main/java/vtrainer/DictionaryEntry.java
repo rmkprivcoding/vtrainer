@@ -1,8 +1,8 @@
 package vtrainer;
 
-import java.util.*;
-
 import org.jdom.Element;
+
+import java.util.*;
 
 public class DictionaryEntry implements Comparable<DictionaryEntry> {
 
@@ -84,7 +84,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         return translations;
     }
 
-    public String getRandomTranslation(){
+    public String getRandomTranslation() {
         return translations.get(random.nextInt(translations.size()));
     }
 

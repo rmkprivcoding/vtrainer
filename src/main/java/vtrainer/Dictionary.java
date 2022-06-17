@@ -1,11 +1,11 @@
 package vtrainer;
 
+import com.google.common.collect.Iterables;
+import org.jdom.Element;
+
 import java.text.Collator;
 import java.util.*;
 import java.util.logging.Logger;
-
-import com.google.common.collect.Iterables;
-import org.jdom.Element;
 
 public class Dictionary {
 

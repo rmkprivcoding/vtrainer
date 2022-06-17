@@ -1104,7 +1104,7 @@ public class VTrainer {
             flashTimer.stop();
             currentIndex--;
             setActiveEntry();
-            if(wasRunning) {
+            if (wasRunning) {
                 flashTimer.restart();
             }
         }
@@ -1119,7 +1119,7 @@ public class VTrainer {
             flashTimer.stop();
             currentIndex++;
             setActiveEntry();
-            if(wasRunning) {
+            if (wasRunning) {
                 flashTimer.restart();
             }
         }
