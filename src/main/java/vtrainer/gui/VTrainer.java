@@ -187,7 +187,7 @@ public class VTrainer {
         });
 
         JScrollPane dScrollPane = new JScrollPane(dictionaryLI);
-        dScrollPane.setPreferredSize(new Dimension(200, 400));
+        dScrollPane.setPreferredSize(new Dimension(300, 400));
         dictionaryPanel.add(dScrollPane, BorderLayout.CENTER);
         JButton startTestBT = new JButton(startTestAction);
         dictionaryPanel.add(startTestBT, BorderLayout.SOUTH);
@@ -522,6 +522,9 @@ public class VTrainer {
         entries.stream().filter(e -> {
             if (!Strings.isNullOrEmpty(searchText)) {
                 if (e.getName().toLowerCase().contains(searchText)) {
+                    return true;
+                }
+                if(e.getTranslations().stream().anyMatch(t -> t.toLowerCase().contains(searchText))){
                     return true;
                 }
                 return false;
