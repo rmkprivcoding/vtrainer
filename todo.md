@@ -1,0 +1,3 @@
+# Todo
+- Change Mac keyboard shortcuts to Cmd-...
+- Introduce MigLayout
