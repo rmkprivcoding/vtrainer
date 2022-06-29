@@ -175,6 +175,10 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         return getName();
     }
 
+    public String toSummaryString() {
+        return getName() + " - " + getTranslations().get(0);
+    }
+
     public String toLargeString() {
 
         String msg = getName() + "\n\n";

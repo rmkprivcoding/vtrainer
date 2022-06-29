@@ -149,6 +149,9 @@ public class VTrainer {
         dictionaryPanel.add(dictionaryTopPanel, BorderLayout.NORTH);
 
         dictionaryLI = new JList(dictionaryLM);
+        DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+        dictionaryLI.setCellRenderer((list, value, index, isSelected, cellHasFocus) ->
+                defaultRenderer.getListCellRendererComponent(list, ((DictionaryEntry) value).toSummaryString(), index, isSelected, cellHasFocus));
         dictionaryLI.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
