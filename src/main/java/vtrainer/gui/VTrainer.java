@@ -48,6 +48,7 @@ public class VTrainer {
     public static final String LABEL_WORD_PHRASE = "Word/Phrase";
     public static final String LABEL_TRANSLATION = "Translation";
     public static final String LABEL_TRANSLATIONS = "Translation(s)";
+    public static final String LABEL_TAGS = "Tags";
 
     private final JFrame mainFrame;
     private final File dictionaryFile;
@@ -560,6 +561,8 @@ public class VTrainer {
         private JTextArea notesTA = new JTextArea(5, 30);
         private JTextField translationTF = new JTextField(20);
         private JList translationLI = null;
+
+        private JTextField tagsTF = new JTextField(20);
         private DefaultListModel translationLM = new DefaultListModel();
         private JButton addBT = new JButton("Add Translation");
         private JButton okBT = new JButton("OK");
@@ -667,6 +670,14 @@ public class VTrainer {
 
             JPanel bottomPanel = new JPanel();
             bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+
+            JPanel tagsUIPanel = new JPanel();
+            tagsUIPanel.setLayout(new FlowLayout());
+            tagsUIPanel.add(new JLabel(LABEL_TAGS));
+            tagsUIPanel.add(tagsTF);
+            tagsUIPanel.setMaximumSize(tagsUIPanel.getPreferredSize());
+
+            bottomPanel.add(tagsUIPanel);
             bottomPanel.add(Box.createHorizontalGlue());
             bottomPanel.add(okBT);
             bottomPanel.add(cancelBT);
@@ -725,6 +736,17 @@ public class VTrainer {
                 selectedEntry.setNotes(notesTA.getText());
             }
 
+            String tags = tagsTF.getText();
+            if (tags.length() > 0) {
+                String[] tagComponents = tags.split(",");
+                for (String tag : tagComponents) {
+                    tag = tag.trim();
+                    if (!Strings.isNullOrEmpty(tag)) {
+                        selectedEntry.getTags().add(tag);
+                    }
+                }
+            }
+
             if (selectedEntry.getID() == null) {
                 dictionary.addEntry(selectedEntry);
                 refreshDictionary();
@@ -760,6 +782,12 @@ public class VTrainer {
                 notesTA.setText(selectedEntry.getNotes());
             } else {
                 notesTA.setText("");
+            }
+
+            if (selectedEntry != null && selectedEntry.getTags() != null) {
+                tagsTF.setText(String.join(",", selectedEntry.getTags()));
+            } else {
+                tagsTF.setText("");
             }
 
             translationTF.setText("");

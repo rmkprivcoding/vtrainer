@@ -10,6 +10,7 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     private static final String LAST_TESTED_ATTR = "last-tested";
     private static final String CREATED_ATTR = "created";
     private static final String TRANSLATION_ELEM = "translation";
+    private static final String TAG_ELEM = "tag";
     private static final String NOTES_ELEM = "notes";
     private static final String NAME_ATTR = "name";
     private static final String ID_ATTR = "id";
@@ -21,6 +22,9 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     private String name;
     private String notes = null;
     private List<String> translations = new ArrayList<>();
+
+    private List<String> tags = new ArrayList<>();
+
     private long lastTested = 0l;
     private long created = 0l;
 
@@ -84,6 +88,21 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
         return translations;
     }
 
+    public void addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+            tags.sort(String::compareToIgnoreCase);
+        }
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
     public String getRandomTranslation() {
         return translations.get(random.nextInt(translations.size()));
     }
@@ -128,6 +147,13 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
             xml.addContent(txml);
         }
 
+        for (Iterator<String> it = tags.iterator(); it.hasNext(); ) {
+            String t = it.next();
+            Element txml = new Element(TAG_ELEM);
+            txml.setText(t);
+            xml.addContent(txml);
+        }
+
         if (notes != null) {
             Element nxml = new Element(NOTES_ELEM);
             nxml.setText(getNotes());
@@ -161,6 +187,13 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
             Element te = (Element) it.next();
             if (!"".equals(te.getText())) {
                 de.getTranslations().add(te.getText());
+            }
+        }
+
+        for (Iterator it = e.getChildren(TAG_ELEM).iterator(); it.hasNext(); ) {
+            Element te = (Element) it.next();
+            if (!"".equals(te.getText())) {
+                de.addTag(te.getText());
             }
         }
 
