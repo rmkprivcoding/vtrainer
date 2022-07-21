@@ -1,5 +1,6 @@
 package vtrainer;
 
+import com.google.common.base.Preconditions;
 import org.jdom.Element;
 
 import java.util.*;
@@ -89,6 +90,8 @@ public class DictionaryEntry implements Comparable<DictionaryEntry> {
     }
 
     public void addTag(String tag) {
+        Preconditions.checkNotNull(tag, "tag cannot be null");
+        tag = tag.toLowerCase();
         if (!tags.contains(tag)) {
             tags.add(tag);
             tags.sort(String::compareToIgnoreCase);
