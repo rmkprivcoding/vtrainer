@@ -2,6 +2,7 @@ package vtrainer.gui;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
+import net.miginfocom.swing.MigLayout;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -137,17 +138,11 @@ public class VTrainer {
         //       propertyDialog = new PropertyDialog();
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setLayout(new MigLayout("fill, insets 0"));
 
-        JPanel dictionaryPanel = new JPanel();
-        dictionaryPanel.setLayout(new BorderLayout());
-
-        JPanel dictionaryTopPanel = new JPanel();
-        dictionaryTopPanel.setLayout(new BorderLayout());
-        dictionaryTopPanel.add(new JLabel("Dictionary"), BorderLayout.NORTH);
+        mainPanel.add(new JLabel("Dictionary"), "span, wrap");
         searchTF = new JTextField(20);
-        dictionaryTopPanel.add(searchTF, BorderLayout.SOUTH);
-        dictionaryPanel.add(dictionaryTopPanel, BorderLayout.NORTH);
+        mainPanel.add(searchTF, "span, growx, wrap");
 
         dictionaryLI = new JList(dictionaryLM);
         DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
@@ -189,9 +184,9 @@ public class VTrainer {
 
         JScrollPane dScrollPane = new JScrollPane(dictionaryLI);
         dScrollPane.setPreferredSize(new Dimension(300, 400));
-        dictionaryPanel.add(dScrollPane, BorderLayout.CENTER);
+        mainPanel.add(dScrollPane, "span, wrap");
         JButton startTestBT = new JButton(startTestAction);
-        dictionaryPanel.add(startTestBT, BorderLayout.SOUTH);
+        mainPanel.add(startTestBT, "span, growx, wrap");
 
         searchTF.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
@@ -219,18 +214,13 @@ public class VTrainer {
             }
         });
 
-        mainPanel.add(dictionaryPanel, BorderLayout.WEST);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         startTestBT.requestFocus();
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
         scoreTF = new JTextField(20);
         scoreTF.setEditable(false);
-        bottomPanel.add(scoreTF);
-        bottomPanel.add(Box.createHorizontalGlue());
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        mainPanel.add(scoreTF, "span, growx, wrap");
 
         refreshDictionary();
 
