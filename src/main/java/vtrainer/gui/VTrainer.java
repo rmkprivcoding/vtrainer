@@ -61,6 +61,7 @@ public class VTrainer {
     private Action addEntryAction = null;
     private Action editEntryAction = null;
     private Action removeEntryAction = null;
+    private Action addTagsAction = null;
     private Action removeTranslationAction = null;
     private Action exitAction = null;
     private Action startTestAction = null;
@@ -75,8 +76,8 @@ public class VTrainer {
     private FlashLearnerDialog flashDialogue = null;
     //    private PropertyDialog propertyDialog = null;
 
-    private DefaultListModel dictionaryLM = new DefaultListModel();
-    private JList dictionaryLI = null;
+    private DefaultListModel<DictionaryEntry> dictionaryLM = new DefaultListModel();
+    private JList<DictionaryEntry> dictionaryLI = null;
     private JTextField scoreTF = null;
     private JTextField searchTF = null;
     private JPopupMenu entryMenu = null;
@@ -286,6 +287,24 @@ public class VTrainer {
             }
         };
 
+        addTagsAction = new AbstractAction("Add Tags") {
+            public void actionPerformed(ActionEvent ae) {
+                String tags = JOptionPane.showInputDialog(mainFrame, "Enter tags to add to selected entries");
+                if (tags != null) {
+                    String[] tagArray = tags.split(",");
+
+                    for (DictionaryEntry entry : dictionaryLI.getSelectedValuesList()) {
+                        for (String tag : tagArray) {
+                            entry.addTag(tag.trim());
+                        }
+                    }
+                    refreshDictionary();
+                    saveAction.setEnabled(true);
+                }
+            }
+        };
+
+
         removeTranslationAction = new AbstractAction("Remove Translation") {
             public void actionPerformed(ActionEvent ae) {
                 selectedEntry.getTranslations().remove(selectedTranslation);
@@ -477,6 +496,7 @@ public class VTrainer {
         entryMenu.add(editEntryAction);
         entryMenu.add(removeEntryAction);
         entryMenu.add(addEntryAction);
+        entryMenu.add(addTagsAction);
 
         translationMenu = new JPopupMenu();
         translationMenu.add(removeTranslationAction);
@@ -515,7 +535,7 @@ public class VTrainer {
                 if (e.getName().toLowerCase().contains(searchText)) {
                     return true;
                 }
-                if(e.getTranslations().stream().anyMatch(t -> t.toLowerCase().contains(searchText))){
+                if (e.getTranslations().stream().anyMatch(t -> t.toLowerCase().contains(searchText))) {
                     return true;
                 }
                 return false;
