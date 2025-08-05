@@ -25,3 +25,20 @@ dependencies {
   implementation 'com.miglayout:miglayout-swing:5.0'
   testImplementation 'junit:junit:4.12'
 }
+
+
+task jpackage(type: Exec) {
+  group = "distribution"
+  description = "Package the app into a native executable with jpackage"
+
+  dependsOn shadowJar
+  outputs.dir "$buildDir/jpackage"
+
+  commandLine "jpackage",
+          "--type", "exe",
+          "--input", "$buildDir/libs",
+          "--dest", "$buildDir/jpackage",
+          "--name", "VTrainer",
+          "--main-jar", "VTrainer-all.jar",
+          "--main-class", "vtrainer.gui.VTrainer"
+}
