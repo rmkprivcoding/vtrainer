@@ -23,7 +23,7 @@ jobs:
         run: git update-index --chmod=+x gradlew
 
       - name: Build EXE with jpackage
-        run: ./gradlew jpackage
+        run: ./gradlew jpackage --info
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
