@@ -89,7 +89,6 @@ public class VTrainer {
     private int flashInterval;
 
     private boolean highscoreMode = false;
-    private static final int NEW_ENTRY_AVG_DIFFICULTY_DELTA = 4;
     private static final String VERSION = "0.9";
 
     static {
@@ -136,7 +135,6 @@ public class VTrainer {
         testDialog = new TestDialog(mainFrame);
         translationDialog = new TranslationDialog(mainFrame);
         flashDialogue = new FlashLearnerDialog(mainFrame);
-        //       propertyDialog = new PropertyDialog();
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new MigLayout("fill, insets 0"));
@@ -148,7 +146,7 @@ public class VTrainer {
         dictionaryLI = new JList(dictionaryLM);
         DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
         dictionaryLI.setCellRenderer((list, value, index, isSelected, cellHasFocus) ->
-                defaultRenderer.getListCellRendererComponent(list, ((DictionaryEntry) value).toSummaryString(), index, isSelected, cellHasFocus));
+                defaultRenderer.getListCellRendererComponent(list, value.toSummaryString(), index, isSelected, cellHasFocus));
         dictionaryLI.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
@@ -168,7 +166,7 @@ public class VTrainer {
             private void checkForPopup(MouseEvent e) {
                 int index = dictionaryLI.locationToIndex(e.getPoint());
                 if (index >= 0) {
-                    selectedEntry = (DictionaryEntry) dictionaryLM.get(index);
+                    selectedEntry = dictionaryLM.get(index);
                     if (e.isPopupTrigger()) {
                         entryMenu.show(e.getComponent(), e.getX(), e.getY());
                     }
@@ -177,11 +175,7 @@ public class VTrainer {
 
         });
 
-        dictionaryLI.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                selectedEntry = (DictionaryEntry) dictionaryLI.getSelectedValue();
-            }
-        });
+        dictionaryLI.addListSelectionListener(e -> selectedEntry = dictionaryLI.getSelectedValue());
 
         JScrollPane dScrollPane = new JScrollPane(dictionaryLI);
         dScrollPane.setPreferredSize(new Dimension(300, 400));
@@ -191,27 +185,8 @@ public class VTrainer {
 
         searchTF.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                logger.info(e.toString());
+                logger.fine(e.toString());
                 rebuildModel();
-/*
-                String searchTerm = searchTF.getText();
-                int matchingIndex = dictionary.getFirstEntryWithPrefixIndex(searchTerm);
-                if (matchingIndex != -1) {
-                    searchTF.setForeground(Color.BLACK);
-                    int last = dictionary.getEntries().size() - 1;
-                    int numVisibleEntries = dictionaryLI.getLastVisibleIndex()
-                            - dictionaryLI.getFirstVisibleIndex();
-                    int computedIndex = Math.min(last, matchingIndex + numVisibleEntries - 1);
-                    logger.info(searchTerm + " matching:" + matchingIndex + "("
-                            + dictionary.getEntries().get(matchingIndex) + "), computed:"
-                            + computedIndex);
-                    // hack
-                    dictionaryLI.ensureIndexIsVisible(0);
-                    dictionaryLI.ensureIndexIsVisible(computedIndex);
-                } else {
-                    searchTF.setForeground(Color.RED);
-                }
-*/
             }
         });
 
@@ -528,7 +503,7 @@ public class VTrainer {
         List<DictionaryEntry> entries = dictionary.getEntries();
 
         String searchText = searchTF.getText().trim().toLowerCase();
-        logger.info("Rebuilding model with search term '" + searchText + "'");
+        logger.fine("Rebuilding model with search term '" + searchText + "'");
 
         entries.stream().filter(e -> {
             if (!Strings.isNullOrEmpty(searchText)) {
@@ -546,12 +521,6 @@ public class VTrainer {
 
     public static void main(String[] argv) throws Exception {
         logger.info("starting VTrainer");
-
-        //        try {
-        //            UIManager.setLookAndFeel(new
-        // com.incors.plaf.kunststoff.KunststoffLookAndFeel());
-        //        } catch (UnsupportedLookAndFeelException ex) {
-        //        }
 
         File dictFile = null;
         if (argv.length > 0) {
